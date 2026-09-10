@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Jory English 🎀</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">🎀 <span>Jory English</span></div>
+    <div class="topbar-actions">
+      <button class="pill-btn" id="langToggle">🌐 <span class="lbl">EN</span></button>
+      <button class="pill-btn" id="themeToggle">🌓 <span class="switch"></span></button>
+    </div>
+  </div>
+
+  <div class="hero">
+    <h1 data-i18n="tagline">تعلمي الإنجليزية سطراً بسطر، بأسلوبك الخاص 🎀</h1>
+    <p data-i18n="subtitle">اختاري مستواكِ وابدئي رحلتك مع القصص التفاعلية</p>
+  </div>
+
+  <div class="overall-progress">
+    <div class="lv-progress-label" id="overallLabel"></div>
+    <div class="bar-track"><div class="bar-fill" id="overallBar" style="width:0%"></div></div>
+  </div>
+
+  <div class="level-grid" id="levelGrid"></div>
+
+  <script src="js/storiesData.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    function render() {
+      const grid = document.getElementById("levelGrid");
+      grid.innerHTML = "";
+      let totalStories = 0, totalDone = 0;
+      ["A1", "A2", "B1", "B2"].forEach((key) => {
+        const meta = JORY_DATA.levels[key];
+        const stories = JORY_DATA[key];
+        const done = Jory.countCompletedInLevel(key);
+        totalStories += stories.length; totalDone += done;
+        const a = document.createElement("a");
+        a.className = "level-card";
+        a.href = `level.html?level=${key}`;
+        a.innerHTML = `
+          <div class="lv-icon">${meta.icon}</div>
+          <h2>${meta.label}</h2>
+          <div class="lv-sub">${stories.length} ${Jory.lang === "ar" ? "قصة" : "stories"} · Oxford ~${meta.oxfordWords}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${(done / stories.length) * 100}%"></div></div>
+          <div class="lv-progress-label">${Jory.t("storiesDone", done, stories.length)}</div>
+        `;
+        grid.appendChild(a);
+      });
+      document.getElementById("overallLabel").textContent = Jory.t("overallProgress") + " — " + Jory.t("storiesDone", totalDone, totalStories);
+      document.getElementById("overallBar").style.width = (totalDone / totalStories) * 100 + "%";
+    }
+    Jory.initTopbar();
+    render();
+    document.addEventListener("jory:langchange", render);
+  </script>
+</body>
+</html>
