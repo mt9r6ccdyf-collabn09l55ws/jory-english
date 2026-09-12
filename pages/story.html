@@ -12,10 +12,7 @@
 
 <body>
 
-  <!-- =========================
-       HEADER
-  ========================== -->
-
+  <!-- HEADER -->
   <header class="site-header">
 
     <div class="container header-content">
@@ -47,16 +44,13 @@
   </header>
 
 
-  <!-- =========================
-       STORY PAGE
-  ========================== -->
-
+  <!-- STORY -->
   <main class="story-page">
 
     <div class="container story-container">
 
 
-      <!-- Back -->
+      <!-- BACK -->
 
       <a
         id="backToLevel"
@@ -68,9 +62,7 @@
       </a>
 
 
-      <!-- =========================
-           STORY HEADER
-      ========================== -->
+      <!-- STORY HEADER -->
 
       <section class="story-top">
 
@@ -97,15 +89,13 @@
       </section>
 
 
-      <!-- =========================
-           STORY PROGRESS
-      ========================== -->
+      <!-- PROGRESS -->
 
       <section class="story-progress">
 
         <div class="story-progress-info">
 
-          <span>
+          <span id="storyProgressLabel">
             Story Progress
           </span>
 
@@ -127,11 +117,9 @@
       </section>
 
 
-      <!-- =========================
-           MAIN LEARNING CARD
-      ========================== -->
+      <!-- CURRENT SENTENCE -->
 
-      <section class="story-learning">
+      <section class="sentence-learning-card">
 
 
         <!-- Sentence number -->
@@ -143,98 +131,61 @@
         </div>
 
 
-        <!-- =========================
-             CURRENT WORD MEANING
-        ========================== -->
+        <!-- Arabic meaning -->
 
         <div
-          id="currentWordInfo"
-          class="current-word-info">
-
-          <div
-            id="currentWordMeaning"
-            class="current-word-meaning">
-            اسمي
-          </div>
-
-          <div
-            id="currentWordIPA"
-            class="current-word-ipa">
-          </div>
-
-        </div>
-
-
-        <!-- =========================
-             WORD WRITING AREA
-        ========================== -->
-
-        <div
-          id="wordWritingArea"
-          class="word-writing-area">
-
-
-          <!-- Original word
-               stays faint behind
-               the user's writing -->
-
-          <div
-            id="ghostWord"
-            class="ghost-word">
-            My
-          </div>
-
-
-          <!-- User writes here -->
-
-          <input
-            id="wordInput"
-            class="word-input"
-            type="text"
-            autocomplete="off"
-            autocapitalize="off"
-            spellcheck="false"
-            aria-label="Type the current word">
-
-
-        </div>
-
-
-        <!-- =========================
-             WORD FEEDBACK
-        ========================== -->
-
-        <div
-          id="wordFeedback"
-          class="word-feedback"
-          aria-live="polite">
-        </div>
-
-
-        <!-- =========================
-             SENTENCE PREVIEW
-        ========================== -->
-
-        <div
-          id="sentencePreview"
-          class="sentence-preview">
-        </div>
-
-
-        <!-- =========================
-             SENTENCE TRANSLATION
-        ========================== -->
-
-        <div
-          id="sentenceTranslation"
-          class="sentence-translation">
+          id="currentWordMeaning"
+          class="current-word-meaning">
           اسمي لمار.
         </div>
 
 
-        <!-- =========================
-             SENTENCE AUDIO
-        ========================== -->
+        <!-- IPA -->
+
+        <div
+          id="currentWordIPA"
+          class="current-word-ipa">
+        </div>
+
+
+        <!-- SENTENCE WRITING -->
+
+        <div class="sentence-writing-area">
+
+          <!-- Original sentence behind -->
+
+          <div
+            id="ghostSentence"
+            class="ghost-sentence">
+            My name is Lamar.
+          </div>
+
+
+          <!-- User writes directly over it -->
+
+          <input
+            id="sentenceInput"
+            class="sentence-input"
+            type="text"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+            aria-label="Type the sentence">
+
+
+        </div>
+
+
+        <!-- FEEDBACK -->
+
+        <div
+          id="typingFeedback"
+          class="typing-feedback"
+          aria-live="polite">
+        </div>
+
+
+        <!-- AUDIO -->
 
         <button
           id="sentenceAudioButton"
@@ -246,9 +197,7 @@
         </button>
 
 
-        <!-- =========================
-             NEXT SENTENCE
-        ========================== -->
+        <!-- NEXT -->
 
         <button
           id="nextSentenceButton"
@@ -256,9 +205,10 @@
           type="button"
           disabled>
 
-          Next Sentence →
+          Next →
 
         </button>
+
 
       </section>
 
@@ -267,9 +217,7 @@
   </main>
 
 
-  <!-- =========================
-       FOOTER
-  ========================== -->
+  <!-- FOOTER -->
 
   <footer class="site-footer">
 
@@ -284,9 +232,7 @@
   </footer>
 
 
-  <!-- =========================
-       JAVASCRIPT
-  ========================== -->
+  <!-- JAVASCRIPT -->
 
   <script src="../js/data.js"></script>
   <script src="../js/app.js"></script>
