@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Story | Jory English 🎀</title>
+
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-content">
+
+      <a href="../index.html" class="logo">
+        Jory English 🎀
+      </a>
+
+      <div class="global-controls">
+        <button
+          id="languageToggle"
+          class="control-button"
+          type="button">
+          🇸🇦 العربية
+        </button>
+
+        <button
+          id="themeToggle"
+          class="control-button"
+          type="button">
+          🌙 Dark
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+
+  <!-- Main Story Page -->
+  <main class="story-page">
+
+    <div class="container">
+
+      <!-- Back -->
+      <a
+        href="level.html?level=A1"
+        id="backToLevel"
+        class="back-button">
+        ← Back to A1
+      </a>
+
+
+      <!-- Story Header -->
+      <section class="story-header">
+
+        <div
+          id="storyEmoji"
+          class="story-page-emoji">
+          🌅
+        </div>
+
+        <div class="story-header-content">
+
+          <span
+            id="storyLevel"
+            class="story-level">
+            A1
+          </span>
+
+          <h1 id="storyTitle">
+            My Morning Routine
+          </h1>
+
+          <p id="storyDescription">
+            A simple story about a morning routine.
+          </p>
+
+        </div>
+
+      </section>
+
+
+      <!-- Story Progress -->
+      <section class="story-progress-card">
+
+        <div class="progress-top">
+
+          <span id="storyProgressLabel">
+            Story Progress
+          </span>
+
+          <span id="sentenceProgressText">
+            0 / 5
+          </span>
+
+        </div>
+
+        <div class="progress-track">
+
+          <div
+            id="sentenceProgressFill"
+            class="progress-fill"
+            style="width: 0%;">
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- Story Learning Area -->
+      <section class="story-learning-card">
+
+        <!-- Sentence number -->
+        <div
+          id="sentenceNumber"
+          class="sentence-number">
+          Sentence 1
+        </div>
+
+
+        <!-- English Sentence -->
+        <div
+          id="sentenceText"
+          class="sentence-text">
+          My name is Lamar.
+        </div>
+
+
+        <!-- Arabic Translation -->
+        <div
+          id="sentenceTranslation"
+          class="sentence-translation">
+          اسمي لمار.
+        </div>
+
+
+        <!-- Sentence Audio -->
+        <button
+          id="sentenceAudioButton"
+          class="audio-button"
+          type="button">
+          🔊 Listen to sentence
+        </button>
+
+
+        <!-- Current Word Information -->
+        <div
+          id="currentWordInfo"
+          class="current-word-info">
+
+          <span
+            id="currentWordLabel"
+            class="current-word-label">
+            Current word
+          </span>
+
+          <div
+            id="currentWordMeaning"
+            class="current-word-meaning">
+            معنى الكلمة
+          </div>
+
+          <div
+            id="currentWordIPA"
+            class="current-word-ipa">
+            /.../
+          </div>
+
+        </div>
+
+
+        <!-- Typing Area -->
+        <div class="typing-area">
+
+          <div
+            id="ghostText"
+            class="ghost-text">
+            Type the sentence here...
+          </div>
+
+          <input
+            id="typingInput"
+            class="typing-input"
+            type="text"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+            placeholder="Type the sentence here..."
+          >
+
+        </div>
+
+
+        <!-- Feedback -->
+        <div
+          id="typingFeedback"
+          class="typing-feedback"
+          aria-live="polite">
+        </div>
+
+
+        <!-- Continue -->
+        <button
+          id="nextSentenceButton"
+          class="next-button"
+          type="button"
+          disabled>
+          Next Sentence →
+        </button>
+
+      </section>
+
+    </div>
+
+  </main>
+
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>Jory English 🎀</p>
+    </div>
+  </footer>
+
+
+  <!-- JavaScript -->
+  <script src="../js/data.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/story.js"></script>
+
+</body>
+</html>
