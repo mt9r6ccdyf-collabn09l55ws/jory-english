@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,8 +12,12 @@
 
 <body>
 
-  <!-- Header -->
+  <!-- =========================
+       HEADER
+  ========================== -->
+
   <header class="site-header">
+
     <div class="container header-content">
 
       <a href="../index.html" class="logo">
@@ -20,6 +25,7 @@
       </a>
 
       <div class="global-controls">
+
         <button
           id="languageToggle"
           class="control-button"
@@ -33,28 +39,40 @@
           type="button">
           🌙 Dark
         </button>
+
       </div>
 
     </div>
+
   </header>
 
 
-  <!-- Main Story Page -->
+  <!-- =========================
+       STORY PAGE
+  ========================== -->
+
   <main class="story-page">
 
-    <div class="container">
+    <div class="container story-container">
+
 
       <!-- Back -->
+
       <a
-        href="level.html?level=A1"
         id="backToLevel"
+        href="level.html?level=A1"
         class="back-button">
+
         ← Back to A1
+
       </a>
 
 
-      <!-- Story Header -->
-      <section class="story-header">
+      <!-- =========================
+           STORY HEADER
+      ========================== -->
+
+      <section class="story-top">
 
         <div
           id="storyEmoji"
@@ -62,38 +80,37 @@
           🌅
         </div>
 
-        <div class="story-header-content">
+        <span
+          id="storyLevel"
+          class="story-level">
+          A1
+        </span>
 
-          <span
-            id="storyLevel"
-            class="story-level">
-            A1
-          </span>
+        <h1 id="storyTitle">
+          My Morning Routine
+        </h1>
 
-          <h1 id="storyTitle">
-            My Morning Routine
-          </h1>
-
-          <p id="storyDescription">
-            A simple story about a morning routine.
-          </p>
-
-        </div>
+        <p id="storyDescription">
+          A simple story about a morning routine.
+        </p>
 
       </section>
 
 
-      <!-- Story Progress -->
-      <section class="story-progress-card">
+      <!-- =========================
+           STORY PROGRESS
+      ========================== -->
 
-        <div class="progress-top">
+      <section class="story-progress">
 
-          <span id="storyProgressLabel">
+        <div class="story-progress-info">
+
+          <span>
             Story Progress
           </span>
 
           <span id="sentenceProgressText">
-            0 / 5
+            1 / 5
           </span>
 
         </div>
@@ -102,8 +119,7 @@
 
           <div
             id="sentenceProgressFill"
-            class="progress-fill"
-            style="width: 0%;">
+            class="progress-fill">
           </div>
 
         </div>
@@ -111,10 +127,15 @@
       </section>
 
 
-      <!-- Story Learning Area -->
-      <section class="story-learning-card">
+      <!-- =========================
+           MAIN LEARNING CARD
+      ========================== -->
+
+      <section class="story-learning">
+
 
         <!-- Sentence number -->
+
         <div
           id="sentenceNumber"
           class="sentence-number">
@@ -122,15 +143,88 @@
         </div>
 
 
-        <!-- English Sentence -->
+        <!-- =========================
+             CURRENT WORD MEANING
+        ========================== -->
+
         <div
-          id="sentenceText"
-          class="sentence-text">
-          My name is Lamar.
+          id="currentWordInfo"
+          class="current-word-info">
+
+          <div
+            id="currentWordMeaning"
+            class="current-word-meaning">
+            اسمي
+          </div>
+
+          <div
+            id="currentWordIPA"
+            class="current-word-ipa">
+          </div>
+
         </div>
 
 
-        <!-- Arabic Translation -->
+        <!-- =========================
+             WORD WRITING AREA
+        ========================== -->
+
+        <div
+          id="wordWritingArea"
+          class="word-writing-area">
+
+
+          <!-- Original word
+               stays faint behind
+               the user's writing -->
+
+          <div
+            id="ghostWord"
+            class="ghost-word">
+            My
+          </div>
+
+
+          <!-- User writes here -->
+
+          <input
+            id="wordInput"
+            class="word-input"
+            type="text"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+            aria-label="Type the current word">
+
+
+        </div>
+
+
+        <!-- =========================
+             WORD FEEDBACK
+        ========================== -->
+
+        <div
+          id="wordFeedback"
+          class="word-feedback"
+          aria-live="polite">
+        </div>
+
+
+        <!-- =========================
+             SENTENCE PREVIEW
+        ========================== -->
+
+        <div
+          id="sentencePreview"
+          class="sentence-preview">
+        </div>
+
+
+        <!-- =========================
+             SENTENCE TRANSLATION
+        ========================== -->
+
         <div
           id="sentenceTranslation"
           class="sentence-translation">
@@ -138,78 +232,32 @@
         </div>
 
 
-        <!-- Sentence Audio -->
+        <!-- =========================
+             SENTENCE AUDIO
+        ========================== -->
+
         <button
           id="sentenceAudioButton"
           class="audio-button"
           type="button">
+
           🔊 Listen to sentence
+
         </button>
 
 
-        <!-- Current Word Information -->
-        <div
-          id="currentWordInfo"
-          class="current-word-info">
+        <!-- =========================
+             NEXT SENTENCE
+        ========================== -->
 
-          <span
-            id="currentWordLabel"
-            class="current-word-label">
-            Current word
-          </span>
-
-          <div
-            id="currentWordMeaning"
-            class="current-word-meaning">
-            معنى الكلمة
-          </div>
-
-          <div
-            id="currentWordIPA"
-            class="current-word-ipa">
-            /.../
-          </div>
-
-        </div>
-
-
-        <!-- Typing Area -->
-        <div class="typing-area">
-
-          <div
-            id="ghostText"
-            class="ghost-text">
-            Type the sentence here...
-          </div>
-
-          <input
-            id="typingInput"
-            class="typing-input"
-            type="text"
-            autocomplete="off"
-            autocapitalize="off"
-            spellcheck="false"
-            placeholder="Type the sentence here..."
-          >
-
-        </div>
-
-
-        <!-- Feedback -->
-        <div
-          id="typingFeedback"
-          class="typing-feedback"
-          aria-live="polite">
-        </div>
-
-
-        <!-- Continue -->
         <button
           id="nextSentenceButton"
           class="next-button"
           type="button"
           disabled>
+
           Next Sentence →
+
         </button>
 
       </section>
@@ -219,18 +267,31 @@
   </main>
 
 
-  <!-- Footer -->
+  <!-- =========================
+       FOOTER
+  ========================== -->
+
   <footer class="site-footer">
+
     <div class="container">
-      <p>Jory English 🎀</p>
+
+      <p>
+        Jory English 🎀
+      </p>
+
     </div>
+
   </footer>
 
 
-  <!-- JavaScript -->
+  <!-- =========================
+       JAVASCRIPT
+  ========================== -->
+
   <script src="../js/data.js"></script>
   <script src="../js/app.js"></script>
   <script src="../js/story.js"></script>
 
 </body>
+
 </html>
