@@ -1133,3 +1133,391 @@ body.dark .story-emoji {
     font-size: 0.76rem;
   }
 }
+/* =====================================================
+   JORY ENGLISH — STORY PAGE
+   Sentence Writing / Ghost Text Design
+   ===================================================== */
+
+.story-page {
+  min-height: calc(100vh - 140px);
+  padding: 30px 0 60px;
+}
+
+.story-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Back button */
+.story-page .back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 24px;
+  text-decoration: none;
+}
+
+/* Story header */
+.story-top {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.story-page-emoji {
+  font-size: 52px;
+  margin-bottom: 8px;
+}
+
+.story-top .story-level {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #f8d9e7;
+  color: #8a4967;
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.story-top h1 {
+  margin: 0;
+  font-size: clamp(28px, 4vw, 42px);
+}
+
+.story-top p {
+  margin: 10px auto 0;
+  max-width: 600px;
+  opacity: 0.7;
+  font-size: 16px;
+}
+
+/* Progress */
+.story-progress {
+  max-width: 850px;
+  margin: 0 auto 25px;
+  padding: 16px 20px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 25px rgba(100, 80, 100, 0.08);
+}
+
+.story-progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.progress-track {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: #f1e8ee;
+  overflow: hidden;
+}
+
+.story-progress .progress-fill {
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f3b6d0, #a9dce8, #b9dfc5);
+  transition: width 0.4s ease;
+}
+
+/* =====================================================
+   MAIN SENTENCE CARD
+   ===================================================== */
+
+.sentence-learning-card {
+  max-width: 1050px;
+  min-height: 480px;
+  margin: 0 auto;
+  padding: 45px 55px;
+  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 18px 50px rgba(80, 60, 90, 0.12);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Sentence number */
+.sentence-number {
+  font-size: 14px;
+  font-weight: 700;
+  opacity: 0.55;
+  margin-bottom: 25px;
+}
+
+/* Arabic meaning */
+.current-word-meaning {
+  display: inline-block;
+  padding: 12px 25px;
+  margin-bottom: 18px;
+  border-radius: 18px;
+  background: #fff1f7;
+  color: #70465b;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* IPA */
+.current-word-ipa {
+  min-height: 20px;
+  margin-bottom: 8px;
+  font-size: 15px;
+  opacity: 0.55;
+}
+
+/* =====================================================
+   GHOST SENTENCE + TYPING OVER IT
+   ===================================================== */
+
+.sentence-writing-area {
+  position: relative;
+  width: 100%;
+  min-height: 170px;
+  display: grid;
+  place-items: center;
+  margin: 15px 0 10px;
+  overflow: hidden;
+}
+
+/* The original sentence */
+.ghost-sentence {
+  position: absolute;
+  z-index: 1;
+
+  width: 100%;
+  padding: 0 20px;
+
+  text-align: center;
+  white-space: nowrap;
+
+  font-size: clamp(30px, 5vw, 58px);
+  line-height: 1.25;
+  font-weight: 700;
+
+  color: #b9b1b8;
+  opacity: 0.35;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Invisible-looking input sitting ON TOP */
+.sentence-input {
+  position: relative;
+  z-index: 2;
+
+  width: min(100%, 950px);
+  height: 90px;
+
+  padding: 5px 20px;
+
+  border: none;
+  outline: none;
+  background: transparent;
+
+  text-align: center;
+  white-space: nowrap;
+
+  font-family: inherit;
+  font-size: clamp(30px, 5vw, 58px);
+  line-height: 1.25;
+  font-weight: 700;
+
+  color: #493c46;
+  caret-color: #d77da5;
+
+  box-shadow: none;
+}
+
+/* Remove browser input styling */
+.sentence-input:focus {
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+/* Feedback */
+.typing-feedback {
+  min-height: 30px;
+  margin: 8px 0 18px;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.typing-feedback.success {
+  color: #4f9b70;
+}
+
+.typing-feedback.error {
+  color: #d47b9d;
+}
+
+/* =====================================================
+   BUTTONS
+   ===================================================== */
+
+.audio-button,
+.next-button {
+  border: none;
+  border-radius: 999px;
+  padding: 13px 24px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.audio-button {
+  background: #e7f4f7;
+  color: #48727d;
+  margin-bottom: 12px;
+}
+
+.next-button {
+  background: #f3bfd5;
+  color: #70465b;
+  min-width: 150px;
+}
+
+.audio-button:hover,
+.next-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.next-button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* =====================================================
+   DARK MODE
+   ===================================================== */
+
+body.dark .story-progress,
+body.dark .sentence-learning-card {
+  background: rgba(38, 34, 42, 0.95);
+}
+
+body.dark .story-top .story-level {
+  background: #543d4b;
+  color: #f5c9dc;
+}
+
+body.dark .current-word-meaning {
+  background: #493a45;
+  color: #f3c9dc;
+}
+
+body.dark .ghost-sentence {
+  color: #d5cbd2;
+  opacity: 0.25;
+}
+
+body.dark .sentence-input {
+  color: #f8edf3;
+  caret-color: #f0a6c8;
+}
+
+body.dark .audio-button {
+  background: #34464b;
+  color: #c7e8ee;
+}
+
+body.dark .next-button {
+  background: #604456;
+  color: #f6d5e2;
+}
+
+body.dark .progress-track {
+  background: #403940;
+}
+
+/* =====================================================
+   MOBILE / IPHONE / IPAD
+   ===================================================== */
+
+@media (max-width: 768px) {
+
+  .story-page {
+    padding: 20px 12px 45px;
+  }
+
+  .sentence-learning-card {
+    padding: 30px 16px;
+    min-height: 430px;
+    border-radius: 25px;
+  }
+
+  .story-page-emoji {
+    font-size: 44px;
+  }
+
+  .current-word-meaning {
+    font-size: 17px;
+    padding: 10px 18px;
+  }
+
+  .sentence-writing-area {
+    min-height: 130px;
+  }
+
+  .ghost-sentence,
+  .sentence-input {
+    font-size: clamp(22px, 7vw, 38px);
+  }
+
+  .sentence-input {
+    height: 70px;
+    padding: 5px;
+  }
+
+  .ghost-sentence {
+    padding: 0 5px;
+  }
+
+  .audio-button,
+  .next-button {
+    width: 90%;
+    max-width: 330px;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .story-top h1 {
+    font-size: 27px;
+  }
+
+  .story-top p {
+    font-size: 14px;
+  }
+
+  .story-progress {
+    padding: 13px 15px;
+  }
+
+  .sentence-learning-card {
+    padding: 25px 10px;
+  }
+
+  .sentence-writing-area {
+    min-height: 110px;
+  }
+
+  .ghost-sentence,
+  .sentence-input {
+    font-size: 21px;
+  }
+
+  .sentence-input {
+    height: 60px;
+  }
+}
