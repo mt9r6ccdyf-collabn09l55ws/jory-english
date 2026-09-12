@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Jory English 🎀</title>
+
+  <link
+    rel="stylesheet"
+    href="../css/style.css"
+  >
+</head>
+
+<body>
+
+  <!-- =========================================
+       HEADER
+       ========================================= -->
+
+  <header class="site-header">
+
+    <div class="container header-content">
+
+      <a
+        href="../index.html"
+        class="logo"
+      >
+        Jory English 🎀
+      </a>
+
+      <div class="global-controls">
+
+        <button
+          id="languageToggle"
+          class="control-button"
+          type="button"
+        >
+          🇸🇦 العربية
+        </button>
+
+        <button
+          id="themeToggle"
+          class="control-button"
+          type="button"
+        >
+          🌙 Dark
+        </button>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- =========================================
+       MAIN
+       ========================================= -->
+
+  <main>
+
+    <section class="level-page">
+
+      <div class="container">
+
+        <!-- Back Button -->
+
+        <a
+          href="../index.html"
+          class="back-button"
+        >
+          ← Back to Home
+        </a>
+
+
+        <!-- Level Header -->
+
+        <div
+          id="levelHeader"
+          class="level-header"
+        >
+
+          <div
+            id="levelIcon"
+            class="level-page-icon"
+          >
+            🌱
+          </div>
+
+          <div>
+
+            <span
+              id="levelCode"
+              class="level-page-code"
+            >
+              A1
+            </span>
+
+            <h1 id="levelTitle">
+              Beginner
+            </h1>
+
+            <p id="levelDescription">
+              Start with simple English.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- Progress -->
+
+        <div class="progress-card">
+
+          <div class="progress-top">
+
+            <div>
+
+              <span
+                id="progressLabel"
+                class="progress-label"
+              >
+                Your Progress
+              </span>
+
+              <strong id="progressPercent">
+                0%
+              </strong>
+
+            </div>
+
+            <span id="storyProgressText">
+              0 / 20 Stories
+            </span>
+
+          </div>
+
+
+          <div class="progress-track">
+
+            <div
+              id="progressBar"
+              class="progress-fill"
+              style="width: 0%;"
+            ></div>
+
+          </div>
+
+        </div>
+
+
+        <!-- Stories -->
+
+        <section class="stories-section">
+
+          <div class="section-heading">
+
+            <span>📖</span>
+
+            <div>
+
+              <h2 id="storiesTitle">
+                Stories
+              </h2>
+
+              <p id="storiesDescription">
+                Choose a story and start learning.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div
+            id="storiesGrid"
+            class="stories-grid"
+          >
+
+            <!-- Stories will be loaded by JavaScript -->
+
+          </div>
+
+        </section>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- =========================================
+       FOOTER
+       ========================================= -->
+
+  <footer class="site-footer">
+
+    <div class="container">
+
+      <p>
+        Jory English 🎀
+      </p>
+
+    </div>
+
+  </footer>
+
+
+  <!-- GLOBAL APP -->
+
+  <script src="../js/app.js"></script>
+
+</body>
+
+</html>
