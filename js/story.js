@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const ghostSentence =
     document.getElementById("ghostSentence");
 
-  const sentenceInput =
+  const oldInput =
     document.getElementById("sentenceInput");
 
   const typingFeedback =
@@ -37,9 +37,9 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("backToLevel");
 
 
-  /* =========================================
+  /* ==========================================
      GET STORY
-     ========================================= */
+     ========================================== */
 
   const params =
     new URLSearchParams(window.location.search);
@@ -58,31 +58,25 @@ document.addEventListener("DOMContentLoaded", () => {
     storyDescription.textContent =
       "Sorry, this story could not be found.";
 
-    sentenceInput.disabled = true;
-
     return;
   }
 
-
-  /* =========================================
-     VARIABLES
-     ========================================= */
 
   let currentSentenceIndex = 0;
 
   const totalSentences =
     story.sentences.length;
 
-  let lastCompletedWordCount = 0;
+  let lastSpokenWordCount = 0;
 
 
   const level =
     story.level || "A1";
 
 
-  /* =========================================
-     STORY INFO
-     ========================================= */
+  /* ==========================================
+     STORY INFORMATION
+     ========================================== */
 
   storyTitle.textContent =
     story.title;
@@ -106,9 +100,60 @@ document.addEventListener("DOMContentLoaded", () => {
     `← Back to ${level}`;
 
 
-  /* =========================================
+  /* ==========================================
+     CREATE REAL WRITING AREA
+     ========================================== */
+
+  /*
+   * We replace the old input with a contenteditable
+   * element.
+   *
+   * This means the typed text and ghost text
+   * live inside ONE element.
+   *
+   * No alignment problem.
+   */
+
+  const sentenceEditor =
+    document.createElement("div");
+
+  sentenceEditor.id =
+    "sentenceInput";
+
+  sentenceEditor.className =
+    "sentence-input sentence-editor";
+
+  sentenceEditor.contentEditable =
+    "true";
+
+  sentenceEditor.setAttribute(
+    "role",
+    "textbox"
+  );
+
+  sentenceEditor.setAttribute(
+    "spellcheck",
+    "false"
+  );
+
+  sentenceEditor.setAttribute(
+    "autocomplete",
+    "off"
+  );
+
+  sentenceEditor.setAttribute(
+    "autocapitalize",
+    "off"
+  );
+
+  oldInput.replaceWith(
+    sentenceEditor
+  );
+
+
+  /* ==========================================
      TEXT NORMALIZATION
-     ========================================= */
+     ========================================== */
 
   function normalize(text) {
 
@@ -120,9 +165,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  /* =========================================
-     SPEAK
-     ========================================= */
+  /* ==========================================
+     SPEECH
+     ========================================== */
 
   function speak(text) {
 
@@ -132,24 +177,34 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    window.speechSynthesis.cancel();
-
-    const voice =
+    const utterance =
       new SpeechSynthesisUtterance(text);
 
-    voice.lang = "en-US";
+    utterance.lang =
+      "en-US";
 
-    voice.rate = 0.82;
+    utterance.rate =
+      0.82;
 
-    voice.pitch = 1;
+    utterance.pitch =
+      1;
 
-    window.speechSynthesis.speak(voice);
+    /*
+     * Do not cancel here.
+     *
+     * This allows every completed word
+     * to be spoken.
+     */
+
+    window.speechSynthesis.speak(
+      utterance
+    );
   }
 
 
-  /* =========================================
+  /* ==========================================
      PROGRESS
-     ========================================= */
+     ========================================== */
 
   function updateProgress() {
 
@@ -164,121 +219,260 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  /* =========================================
-     ALIGN INPUT WITH GHOST
-     ========================================= */
+  /* ==========================================
+     GET PLAIN TEXT
+     ========================================== */
 
-  function alignInput() {
+  function getEditorText() {
 
-    requestAnimationFrame(() => {
-
-      /*
-       * The ghost and input use the same
-       * font properties.
-       */
-
-      const ghostRect =
-        ghostSentence.getBoundingClientRect();
-
-      const areaRect =
-        document
-          .querySelector(".sentence-writing-area")
-          .getBoundingClientRect();
-
-
-      /*
-       * Same width as the ghost text.
-       */
-
-      sentenceInput.style.width =
-        `${ghostRect.width}px`;
-
-
-      /*
-       * Same left position.
-       */
-
-      sentenceInput.style.left =
-        `${ghostRect.left - areaRect.left}px`;
-
-
-      /*
-       * Same vertical position.
-       */
-
-      sentenceInput.style.top =
-        `${ghostRect.top - areaRect.top}px`;
-
-
-      /*
-       * Important:
-       * Do NOT use translate here.
-       */
-
-      sentenceInput.style.transform =
-        "none";
-
-    });
+    return sentenceEditor.innerText
+      .replace(/\u00a0/g, " ");
   }
 
 
-  /* =========================================
-     GET COMPLETED WORDS
-     ========================================= */
+  /* ==========================================
+     SAVE CARET POSITION
+     ========================================== */
 
-  function getCompletedWords() {
+  function getCaretOffset() {
 
-    const typed =
-      sentenceInput.value;
+    const selection =
+      window.getSelection();
 
-    /*
-     * A word becomes complete when
-     * the user types a space after it.
-     */
-
-    const parts =
-      typed.split(/\s+/);
-
-    if (
-      typed.length === 0 ||
-      !typed.endsWith(" ")
-    ) {
-
-      parts.pop();
-
+    if (!selection.rangeCount) {
+      return 0;
     }
 
-    return parts.filter(Boolean);
+    const range =
+      selection.getRangeAt(0);
+
+    const preRange =
+      range.cloneRange();
+
+    preRange.selectNodeContents(
+      sentenceEditor
+    );
+
+    preRange.setEnd(
+      range.endContainer,
+      range.endOffset
+    );
+
+    return preRange.toString().length;
   }
 
 
-  /* =========================================
-     PRONOUNCE NEW WORD
-     ========================================= */
+  /* ==========================================
+     RESTORE CARET
+     ========================================== */
 
-  function pronounceNewWords() {
+  function setCaretOffset(offset) {
+
+    const selection =
+      window.getSelection();
+
+    const range =
+      document.createRange();
+
+    let currentOffset = 0;
+
+    let found = false;
+
+
+    function walk(node) {
+
+      if (found) return;
+
+      if (node.nodeType === Node.TEXT_NODE) {
+
+        const length =
+          node.textContent.length;
+
+        if (
+          currentOffset + length >=
+          offset
+        ) {
+
+          range.setStart(
+            node,
+            Math.max(
+              0,
+              offset - currentOffset
+            )
+          );
+
+          range.collapse(true);
+
+          found = true;
+
+          return;
+        }
+
+        currentOffset += length;
+
+      } else {
+
+        for (
+          const child of node.childNodes
+        ) {
+
+          walk(child);
+
+          if (found) return;
+        }
+      }
+    }
+
+
+    walk(sentenceEditor);
+
+
+    if (!found) {
+
+      range.selectNodeContents(
+        sentenceEditor
+      );
+
+      range.collapse(false);
+    }
+
+
+    selection.removeAllRanges();
+
+    selection.addRange(range);
+  }
+
+
+  /* ==========================================
+     RENDER SENTENCE
+     ========================================== */
+
+  function renderSentence() {
 
     const sentence =
-      story.sentences[currentSentenceIndex];
+      story.sentences[
+        currentSentenceIndex
+      ].text;
 
-    const expectedWords =
-      sentence.text.trim().split(/\s+/);
-
-    const completedWords =
-      getCompletedWords();
+    const typed =
+      getEditorText();
 
 
     /*
-     * Only pronounce NEW completed words.
+     * How many characters are correct
+     * from the beginning?
      */
 
+    let correctLength = 0;
+
+
     while (
-      lastCompletedWordCount <
+      correctLength < typed.length &&
+      correctLength < sentence.length &&
+      typed[correctLength] ===
+      sentence[correctLength]
+    ) {
+
+      correctLength++;
+    }
+
+
+    const correctPart =
+      sentence.substring(
+        0,
+        correctLength
+      );
+
+    const remainingPart =
+      sentence.substring(
+        correctLength
+      );
+
+
+    /*
+     * Rebuild the ONE visible sentence.
+     */
+
+    sentenceEditor.innerHTML = "";
+
+
+    const correctSpan =
+      document.createElement("span");
+
+    correctSpan.className =
+      "typed-visible";
+
+    correctSpan.textContent =
+      correctPart;
+
+
+    const remainingSpan =
+      document.createElement("span");
+
+    remainingSpan.className =
+      "ghost-remaining";
+
+    remainingSpan.textContent =
+      remainingPart;
+
+
+    sentenceEditor.appendChild(
+      correctSpan
+    );
+
+    sentenceEditor.appendChild(
+      remainingSpan
+    );
+
+
+    /*
+     * Restore the caret.
+     */
+
+    setCaretOffset(
+      Math.min(
+        typed.length,
+        sentence.length
+      )
+    );
+  }
+
+
+  /* ==========================================
+     COMPLETED WORDS
+     ========================================== */
+
+  function pronounceCompletedWords() {
+
+    const sentence =
+      story.sentences[
+        currentSentenceIndex
+      ].text;
+
+
+    const expectedWords =
+      sentence
+        .trim()
+        .split(/\s+/);
+
+
+    const typed =
+      getEditorText();
+
+
+    const completedWords =
+      typed.endsWith(" ")
+        ? typed.trim().split(/\s+/)
+        : typed.trim().split(/\s+/).slice(0, -1);
+
+
+    while (
+      lastSpokenWordCount <
       completedWords.length
     ) {
 
       const index =
-        lastCompletedWordCount;
+        lastSpokenWordCount;
 
       const typedWord =
         completedWords[index];
@@ -294,38 +488,39 @@ document.addEventListener("DOMContentLoaded", () => {
       ) {
 
         /*
-         * 🔊 Pronounce the completed word.
+         * 🔊 Every completed word speaks.
          */
 
         speak(expectedWord);
-
       }
 
 
-      lastCompletedWordCount++;
+      lastSpokenWordCount++;
     }
   }
 
 
-  /* =========================================
+  /* ==========================================
      CHECK SENTENCE
-     ========================================= */
+     ========================================== */
 
   function checkSentence() {
 
     const sentence =
-      story.sentences[currentSentenceIndex];
+      story.sentences[
+        currentSentenceIndex
+      ].text;
+
 
     const typed =
-      normalize(sentenceInput.value);
+      normalize(
+        getEditorText()
+      );
+
 
     const correct =
-      normalize(sentence.text);
+      normalize(sentence);
 
-
-    /*
-     * COMPLETE + CORRECT
-     */
 
     if (typed === correct) {
 
@@ -337,32 +532,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
       /*
-       * 🔊 Pronounce the whole sentence.
+       * 🔊 Speak the whole sentence.
        */
 
-      speak(sentence.text);
+      speak(sentence);
 
 
-      sentenceInput.disabled =
-        true;
+      sentenceEditor.contentEditable =
+        "false";
+
 
       nextSentenceButton.disabled =
         false;
 
+
       sentenceProgressFill.style.width =
         "100%";
+
 
       return;
     }
 
 
-    /*
-     * WRONG ANSWER
-     */
-
     if (
-      sentenceInput.value.length >=
-      sentence.text.length
+      getEditorText().length >=
+      sentence.length
     ) {
 
       typingFeedback.textContent =
@@ -386,124 +580,58 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  /* =========================================
-     LOAD SENTENCE
-     ========================================= */
+  /* ==========================================
+     TYPING EVENT
+     ========================================== */
 
-  function loadSentence() {
-
-    const sentence =
-      story.sentences[currentSentenceIndex];
-
-
-    sentenceNumber.textContent =
-      `Sentence ${currentSentenceIndex + 1}`;
-
-
-    currentWordMeaning.textContent =
-      sentence.translation || "";
-
-
-    currentWordIPA.textContent =
-      "";
-
-
-    /*
-     * Put the SAME sentence
-     * into the transparent guide.
-     */
-
-    ghostSentence.textContent =
-      sentence.text;
-
-
-    sentenceInput.value =
-      "";
-
-
-    sentenceInput.disabled =
-      false;
-
-
-    typingFeedback.textContent =
-      "";
-
-    typingFeedback.className =
-      "typing-feedback";
-
-
-    nextSentenceButton.disabled =
-      true;
-
-
-    lastCompletedWordCount =
-      0;
-
-
-    updateProgress();
-
-
-    /*
-     * Wait for browser to render
-     * then align the typing layer.
-     */
-
-    requestAnimationFrame(() => {
-
-      alignInput();
-
-      sentenceInput.focus();
-
-    });
-
-  }
-
-
-  /* =========================================
-     TYPING
-     ========================================= */
-
-  sentenceInput.addEventListener(
+  sentenceEditor.addEventListener(
     "input",
     () => {
 
       /*
-       * 🔊 Pronounce completed words.
+       * Speak completed words.
        */
 
-      pronounceNewWords();
+      pronounceCompletedWords();
 
 
       /*
-       * Check the complete sentence.
+       * Redraw the sentence.
+       */
+
+      renderSentence();
+
+
+      /*
+       * Check full sentence.
        */
 
       checkSentence();
-
     }
   );
 
 
-  /* =========================================
+  /* ==========================================
      LISTEN BUTTON
-     ========================================= */
+     ========================================== */
 
   sentenceAudioButton.addEventListener(
     "click",
     () => {
 
       const sentence =
-        story.sentences[currentSentenceIndex];
+        story.sentences[
+          currentSentenceIndex
+        ].text;
 
-      speak(sentence.text);
-
+      speak(sentence);
     }
   );
 
 
-  /* =========================================
-     NEXT BUTTON
-     ========================================= */
+  /* ==========================================
+     NEXT
+     ========================================== */
 
   nextSentenceButton.addEventListener(
     "click",
@@ -522,37 +650,32 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
 
-      /* =====================================
+      /* ======================================
          STORY COMPLETE
-         ===================================== */
+         ====================================== */
 
       sentenceNumber.textContent =
         "🎉 Story Complete!";
 
-
       currentWordMeaning.textContent =
         "أحسنتِ!";
-
 
       currentWordIPA.textContent =
         "";
 
 
-      ghostSentence.textContent =
-        "You completed the story!";
+      sentenceEditor.innerHTML =
+        `<span class="typed-visible complete">
+          You completed the story!
+        </span>`;
 
 
-      sentenceInput.value =
-        "";
-
-
-      sentenceInput.disabled =
-        true;
+      sentenceEditor.contentEditable =
+        "false";
 
 
       typingFeedback.textContent =
         "✓ Story completed successfully!";
-
 
       typingFeedback.className =
         "typing-feedback success";
@@ -565,33 +688,90 @@ document.addEventListener("DOMContentLoaded", () => {
       sentenceProgressText.textContent =
         `${totalSentences} / ${totalSentences}`;
 
-
       sentenceProgressFill.style.width =
         "100%";
-
     }
   );
 
 
-  /* =========================================
-     RESIZE
-     ========================================= */
+  /* ==========================================
+     LOAD SENTENCE
+     ========================================== */
 
-  window.addEventListener(
-    "resize",
-    () => {
+  function loadSentence() {
 
-      if (!sentenceInput.disabled) {
-        alignInput();
-      }
-
-    }
-  );
+    const sentence =
+      story.sentences[
+        currentSentenceIndex
+      ];
 
 
-  /* =========================================
+    sentenceNumber.textContent =
+      `Sentence ${currentSentenceIndex + 1}`;
+
+
+    currentWordMeaning.textContent =
+      sentence.translation || "";
+
+
+    currentWordIPA.textContent =
+      "";
+
+
+    sentenceEditor.contentEditable =
+      "true";
+
+
+    sentenceEditor.innerHTML = "";
+
+
+    lastSpokenWordCount =
+      0;
+
+
+    typingFeedback.textContent =
+      "";
+
+    typingFeedback.className =
+      "typing-feedback";
+
+
+    nextSentenceButton.disabled =
+      true;
+
+
+    updateProgress();
+
+
+    /*
+     * Put the full sentence on screen.
+     */
+
+    const ghost =
+      document.createElement("span");
+
+    ghost.className =
+      "ghost-remaining";
+
+    ghost.textContent =
+      sentence.text;
+
+    sentenceEditor.appendChild(
+      ghost
+    );
+
+
+    setTimeout(() => {
+
+      sentenceEditor.focus();
+
+    }, 100);
+  }
+
+
+  /* ==========================================
      START
-     ========================================= */
+     ========================================== */
 
   loadSentence();
 
