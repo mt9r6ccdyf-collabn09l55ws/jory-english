@@ -1,0 +1,530 @@
+/* ==========================================
+   JORY ENGLISH
+   STORY PAGE ONLY
+   ========================================== */
+
+
+.story-page {
+  min-height: calc(100vh - 140px);
+  padding: 40px 0 70px;
+}
+
+
+.story-container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+
+/* ==========================================
+   STORY HEADER
+   ========================================== */
+
+.story-top {
+  text-align: center;
+  margin: 20px auto 25px;
+}
+
+
+.story-page-emoji {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+
+.story-level {
+  display: inline-block;
+
+  padding: 6px 14px;
+
+  border-radius: 999px;
+
+  background: #f8dce8;
+
+  color: #765468;
+
+  font-size: 14px;
+
+  font-weight: 700;
+}
+
+
+.story-top h1 {
+  margin: 12px 0 6px;
+
+  font-size: clamp(28px, 5vw, 42px);
+
+  color: #4c4149;
+}
+
+
+.story-top p {
+  margin: 0;
+
+  color: #8d8189;
+
+  font-size: 16px;
+}
+
+
+/* ==========================================
+   PROGRESS
+   ========================================== */
+
+.story-progress {
+  max-width: 850px;
+
+  margin: 0 auto 35px;
+}
+
+
+.story-progress-info {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 9px;
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  color: #776b74;
+}
+
+
+.progress-track {
+  width: 100%;
+
+  height: 9px;
+
+  background: #eee5ea;
+
+  border-radius: 999px;
+
+  overflow: hidden;
+}
+
+
+.progress-fill {
+  width: 0%;
+
+  height: 100%;
+
+  background: #e8a9c2;
+
+  border-radius: inherit;
+
+  transition: width 0.3s ease;
+}
+
+
+/* ==========================================
+   LEARNING CARD
+   ========================================== */
+
+.sentence-learning-card {
+  position: relative;
+
+  max-width: 1000px;
+
+  min-height: 500px;
+
+  margin: 0 auto;
+
+  padding: 45px 35px 50px;
+
+  border-radius: 30px;
+
+  background: rgba(255, 255, 255, 0.88);
+
+  box-shadow:
+    0 18px 50px rgba(80, 60, 75, 0.10);
+
+  text-align: center;
+}
+
+
+.sentence-number {
+  font-size: 17px;
+
+  font-weight: 700;
+
+  color: #7d6f78;
+
+  margin-bottom: 18px;
+}
+
+
+.current-word-meaning {
+  display: inline-block;
+
+  padding: 10px 20px;
+
+  margin-bottom: 30px;
+
+  border-radius: 16px;
+
+  background: #fae8ef;
+
+  color: #654e5b;
+
+  font-size: 20px;
+
+  font-weight: 700;
+}
+
+
+.current-word-ipa {
+  min-height: 5px;
+}
+
+
+/* ==========================================
+   WRITING AREA
+   ========================================== */
+
+.sentence-writing-area {
+  position: relative;
+
+  width: 100%;
+
+  height: 180px;
+
+  margin: 15px auto 20px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  overflow: visible;
+}
+
+
+/* ==========================================
+   GHOST SENTENCE
+   ========================================== */
+
+.ghost-sentence {
+
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform: translate(-50%, -50%);
+
+  width: max-content;
+
+  max-width: 95%;
+
+  white-space: nowrap;
+
+  font-family: Arial, sans-serif;
+
+  font-size: clamp(30px, 5vw, 58px);
+
+  font-weight: 700;
+
+  line-height: 1.2;
+
+  color: #aaa4aa;
+
+  opacity: 0.28;
+
+  pointer-events: none;
+
+  user-select: none;
+
+  z-index: 1;
+}
+
+
+/* ==========================================
+   TYPED SENTENCE
+   ========================================== */
+
+.typed-sentence {
+
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform: translate(-50%, -50%);
+
+  width: max-content;
+
+  max-width: 95%;
+
+  white-space: nowrap;
+
+  text-align: left;
+
+  font-family: Arial, sans-serif;
+
+  font-size: clamp(30px, 5vw, 58px);
+
+  font-weight: 700;
+
+  line-height: 1.2;
+
+  color: #493c46;
+
+  pointer-events: none;
+
+  user-select: none;
+
+  z-index: 3;
+}
+
+
+/* ==========================================
+   INVISIBLE INPUT
+   ========================================== */
+
+.sentence-input {
+
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform: translate(-50%, -50%);
+
+  width: 90%;
+
+  height: 90px;
+
+  background: transparent !important;
+
+  border: none !important;
+
+  outline: none !important;
+
+  box-shadow: none !important;
+
+  text-align: center;
+
+  font-family: Arial, sans-serif;
+
+  font-size: clamp(30px, 5vw, 58px);
+
+  font-weight: 700;
+
+  color: transparent !important;
+
+  -webkit-text-fill-color: transparent !important;
+
+  caret-color: #e58bb0;
+
+  padding: 0 !important;
+
+  margin: 0 !important;
+
+  z-index: 5;
+
+}
+
+
+/* ==========================================
+   FEEDBACK
+   ========================================== */
+
+.typing-feedback {
+
+  min-height: 30px;
+
+  margin: 5px auto 15px;
+
+  font-size: 16px;
+
+  font-weight: 700;
+}
+
+
+.typing-feedback.success {
+  color: #65a47b;
+}
+
+
+.typing-feedback.error {
+  color: #d8788d;
+}
+
+
+/* ==========================================
+   BUTTONS
+   ========================================== */
+
+.audio-button,
+.next-button {
+
+  display: block;
+
+  margin: 10px auto;
+
+  border: none;
+
+  border-radius: 999px;
+
+  padding: 15px 28px;
+
+  font-family: inherit;
+
+  font-size: 16px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+
+.audio-button {
+  background: #d9edf0;
+
+  color: #41606a;
+}
+
+
+.next-button {
+  background: #e8b4c8;
+
+  color: white;
+}
+
+
+.audio-button:hover,
+.next-button:not(:disabled):hover {
+  transform: translateY(-2px);
+}
+
+
+.next-button:disabled {
+  opacity: 0.45;
+
+  cursor: not-allowed;
+}
+
+
+/* ==========================================
+   DARK MODE
+   ========================================== */
+
+body.dark .sentence-learning-card {
+  background: rgba(35, 31, 36, 0.92);
+}
+
+
+body.dark .story-top h1 {
+  color: #fff4fa;
+}
+
+
+body.dark .story-top p,
+body.dark .story-progress-info,
+body.dark .sentence-number {
+  color: #c9bec6;
+}
+
+
+body.dark .current-word-meaning {
+  background: #493b45;
+
+  color: #f5dce8;
+}
+
+
+body.dark .ghost-sentence {
+  color: #d9ced6;
+
+  opacity: 0.22;
+}
+
+
+body.dark .typed-sentence {
+  color: #fff3f8;
+}
+
+
+body.dark .sentence-input {
+  caret-color: #f2a8c4;
+}
+
+
+/* ==========================================
+   TABLET
+   ========================================== */
+
+@media (max-width: 768px) {
+
+  .story-page {
+    padding: 25px 0 50px;
+  }
+
+
+  .sentence-learning-card {
+    min-height: 450px;
+
+    padding:
+      35px
+      20px
+      40px;
+
+    border-radius: 24px;
+  }
+
+
+  .sentence-writing-area {
+    height: 150px;
+  }
+
+
+  .ghost-sentence,
+  .typed-sentence,
+  .sentence-input {
+    font-size: clamp(24px, 7vw, 42px);
+  }
+
+}
+
+
+/* ==========================================
+   PHONE
+   ========================================== */
+
+@media (max-width: 480px) {
+
+  .sentence-learning-card {
+    padding:
+      30px
+      14px
+      35px;
+  }
+
+
+  .current-word-meaning {
+    font-size: 17px;
+  }
+
+
+  .sentence-writing-area {
+    height: 125px;
+  }
+
+
+  .ghost-sentence,
+  .typed-sentence,
+  .sentence-input {
+    font-size: 22px;
+  }
+
+}
