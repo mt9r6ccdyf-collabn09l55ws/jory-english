@@ -3,37 +3,57 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>Story | Jory English 🎀</title>
 
-  <link rel="stylesheet" href="../css/style.css">
+  <link
+    rel="stylesheet"
+    href="../css/style.css"
+  >
+
+  <!-- Story-only CSS -->
+  <link
+    rel="stylesheet"
+    href="../css/story.css"
+  >
 </head>
+
 
 <body>
 
-  <!-- HEADER -->
   <header class="site-header">
 
     <div class="container header-content">
 
-      <a href="../index.html" class="logo">
+      <a
+        href="../index.html"
+        class="logo"
+      >
         Jory English 🎀
       </a>
+
 
       <div class="global-controls">
 
         <button
           id="languageToggle"
           class="control-button"
-          type="button">
+          type="button"
+        >
           🇸🇦 العربية
         </button>
+
 
         <button
           id="themeToggle"
           class="control-button"
-          type="button">
+          type="button"
+        >
           🌙 Dark
         </button>
 
@@ -44,43 +64,43 @@
   </header>
 
 
-  <!-- STORY -->
+
   <main class="story-page">
 
     <div class="container story-container">
 
-
-      <!-- BACK -->
-
       <a
         id="backToLevel"
         href="level.html?level=A1"
-        class="back-button">
-
+        class="back-button"
+      >
         ← Back to A1
-
       </a>
 
 
-      <!-- STORY HEADER -->
 
       <section class="story-top">
 
         <div
           id="storyEmoji"
-          class="story-page-emoji">
+          class="story-page-emoji"
+        >
           🌅
         </div>
 
+
         <span
           id="storyLevel"
-          class="story-level">
+          class="story-level"
+        >
           A1
         </span>
+
 
         <h1 id="storyTitle">
           My Morning Routine
         </h1>
+
 
         <p id="storyDescription">
           A simple story about a morning routine.
@@ -89,7 +109,6 @@
       </section>
 
 
-      <!-- PROGRESS -->
 
       <section class="story-progress">
 
@@ -105,63 +124,80 @@
 
         </div>
 
+
         <div class="progress-track">
 
           <div
             id="sentenceProgressFill"
-            class="progress-fill">
-          </div>
+            class="progress-fill"
+          ></div>
 
         </div>
 
       </section>
 
 
-      <!-- CURRENT SENTENCE -->
 
       <section class="sentence-learning-card">
 
-
-        <!-- Sentence number -->
-
         <div
           id="sentenceNumber"
-          class="sentence-number">
+          class="sentence-number"
+        >
           Sentence 1
         </div>
 
 
-        <!-- Arabic meaning -->
 
         <div
           id="currentWordMeaning"
-          class="current-word-meaning">
+          class="current-word-meaning"
+        >
           اسمي لمار.
         </div>
 
 
-        <!-- IPA -->
-
         <div
           id="currentWordIPA"
-          class="current-word-ipa">
-        </div>
+          class="current-word-ipa"
+        ></div>
 
 
-        <!-- SENTENCE WRITING -->
+
+        <!-- =================================
+             WRITING AREA
+             ================================= -->
 
         <div class="sentence-writing-area">
 
-          <!-- Original sentence behind -->
+          <!--
+            This is the permanent ghost sentence.
+          -->
 
           <div
             id="ghostSentence"
-            class="ghost-sentence">
+            class="ghost-sentence"
+          >
             My name is Lamar.
           </div>
 
 
-          <!-- User writes directly over it -->
+          <!--
+            This is the text the learner has typed.
+            It uses the SAME visual position
+            as the ghost sentence.
+          -->
+
+          <div
+            id="typedSentence"
+            class="typed-sentence"
+          ></div>
+
+
+          <!--
+            Invisible keyboard input.
+            It ONLY receives typing.
+          -->
 
           <input
             id="sentenceInput"
@@ -170,45 +206,39 @@
             autocomplete="off"
             autocapitalize="off"
             spellcheck="false"
-            aria-label="Type the sentence">
-
+            aria-label="Type the sentence"
+          >
 
         </div>
 
 
-        <!-- FEEDBACK -->
 
         <div
           id="typingFeedback"
           class="typing-feedback"
-          aria-live="polite">
-        </div>
+          aria-live="polite"
+        ></div>
 
 
-        <!-- AUDIO -->
 
         <button
           id="sentenceAudioButton"
           class="audio-button"
-          type="button">
-
+          type="button"
+        >
           🔊 Listen to sentence
-
         </button>
 
 
-        <!-- NEXT -->
 
         <button
           id="nextSentenceButton"
           class="next-button"
           type="button"
-          disabled>
-
+          disabled
+        >
           Next →
-
         </button>
-
 
       </section>
 
@@ -217,7 +247,6 @@
   </main>
 
 
-  <!-- FOOTER -->
 
   <footer class="site-footer">
 
@@ -232,10 +261,11 @@
   </footer>
 
 
-  <!-- JAVASCRIPT -->
 
   <script src="../js/data.js"></script>
+
   <script src="../js/app.js"></script>
+
   <script src="../js/story.js"></script>
 
 </body>
