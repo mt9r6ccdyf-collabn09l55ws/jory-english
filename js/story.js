@@ -1,120 +1,62 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-  /* =========================================
-     ELEMENTS
-     ========================================= */
+  const storyTitle = document.getElementById("storyTitle");
+  const storyDescription = document.getElementById("storyDescription");
+  const storyEmoji = document.getElementById("storyEmoji");
+  const storyLevel = document.getElementById("storyLevel");
 
-  const storyTitle =
-    document.getElementById("storyTitle");
+  const sentenceNumber = document.getElementById("sentenceNumber");
+  const currentWordMeaning = document.getElementById("currentWordMeaning");
+  const currentWordIPA = document.getElementById("currentWordIPA");
 
-  const storyDescription =
-    document.getElementById("storyDescription");
+  const ghostSentence = document.getElementById("ghostSentence");
+  const sentenceInput = document.getElementById("sentenceInput");
 
-  const storyEmoji =
-    document.getElementById("storyEmoji");
+  const typingFeedback = document.getElementById("typingFeedback");
+  const sentenceAudioButton = document.getElementById("sentenceAudioButton");
+  const nextSentenceButton = document.getElementById("nextSentenceButton");
 
-  const storyLevel =
-    document.getElementById("storyLevel");
+  const sentenceProgressText = document.getElementById("sentenceProgressText");
+  const sentenceProgressFill = document.getElementById("sentenceProgressFill");
 
-  const sentenceNumber =
-    document.getElementById("sentenceNumber");
-
-  const currentWordMeaning =
-    document.getElementById("currentWordMeaning");
-
-  const currentWordIPA =
-    document.getElementById("currentWordIPA");
-
-  const ghostSentence =
-    document.getElementById("ghostSentence");
-
-  const typedSentence =
-    document.getElementById("typedSentence");
-
-  const sentenceInput =
-    document.getElementById("sentenceInput");
-
-  const typingFeedback =
-    document.getElementById("typingFeedback");
-
-  const sentenceAudioButton =
-    document.getElementById("sentenceAudioButton");
-
-  const nextSentenceButton =
-    document.getElementById("nextSentenceButton");
-
-  const sentenceProgressText =
-    document.getElementById("sentenceProgressText");
-
-  const sentenceProgressFill =
-    document.getElementById("sentenceProgressFill");
-
-  const backToLevel =
-    document.getElementById("backToLevel");
+  const backToLevel = document.getElementById("backToLevel");
 
 
   /* =========================================
      STORY
      ========================================= */
 
-  const params =
-    new URLSearchParams(
-      window.location.search
-    );
+  const params = new URLSearchParams(window.location.search);
+  const storyId = params.get("story");
 
-  const storyId =
-    params.get("story");
-
-  const story =
-    getStoryById(storyId);
+  const story = getStoryById(storyId);
 
 
   if (!story) {
-
-    storyTitle.textContent =
-      "Story not found";
-
+    storyTitle.textContent = "Story not found";
     storyDescription.textContent =
       "Sorry, this story could not be found.";
-
-    sentenceInput.disabled =
-      true;
-
     return;
   }
 
 
-  /* =========================================
-     VARIABLES
-     ========================================= */
-
   let currentSentenceIndex = 0;
-
-  const totalSentences =
-    story.sentences.length;
+  const totalSentences = story.sentences.length;
 
   let spokenWordCount = 0;
 
 
-  const level =
-    story.level || "A1";
+  const level = story.level || "A1";
 
 
   /* =========================================
      STORY INFO
      ========================================= */
 
-  storyTitle.textContent =
-    story.title;
-
-  storyDescription.textContent =
-    story.description;
-
-  storyEmoji.textContent =
-    story.emoji;
-
-  storyLevel.textContent =
-    level;
+  storyTitle.textContent = story.title;
+  storyDescription.textContent = story.description;
+  storyEmoji.textContent = story.emoji;
+  storyLevel.textContent = level;
 
   document.title =
     `${story.title} | Jory English 🎀`;
@@ -131,7 +73,6 @@ document.addEventListener("DOMContentLoaded", () => {
      ========================================= */
 
   function normalize(text) {
-
     return text
       .toLowerCase()
       .replace(/[.,!?;:'"()]/g, "")
@@ -141,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     SPEAK
+     SPEECH
      ========================================= */
 
   function speak(text) {
@@ -154,23 +95,234 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.speechSynthesis.cancel();
 
-
     const utterance =
       new SpeechSynthesisUtterance(text);
 
-    utterance.lang =
-      "en-US";
+    utterance.lang = "en-US";
+    utterance.rate = 0.82;
+    utterance.pitch = 1;
 
-    utterance.rate =
-      0.82;
-
-    utterance.pitch =
-      1;
+    window.speechSynthesis.speak(utterance);
+  }
 
 
-    window.speechSynthesis.speak(
-      utterance
+  /* =========================================
+     FORCE INPUT TO WORK
+     ========================================= */
+
+  function prepareInput() {
+
+    sentenceInput.disabled = false;
+    sentenceInput.readOnly = false;
+
+    sentenceInput.style.setProperty(
+      "pointer-events",
+      "auto",
+      "important"
     );
+
+    sentenceInput.style.setProperty(
+      "z-index",
+      "100",
+      "important"
+    );
+
+    sentenceInput.style.setProperty(
+      "display",
+      "block",
+      "important"
+    );
+
+    sentenceInput.style.setProperty(
+      "visibility",
+      "visible",
+      "important"
+    );
+
+    sentenceInput.style.setProperty(
+      "opacity",
+      "1",
+      "important"
+    );
+
+    sentenceInput.style.setProperty(
+      "background",
+      "transparent",
+      "important"
+    );
+
+    sentenceInput.style.setProperty(
+      "border",
+      "none",
+      "important"
+    );
+
+    sentenceInput.style.setProperty(
+      "outline",
+      "none",
+      "important"
+    );
+
+    sentenceInput.style.setProperty(
+      "box-shadow",
+      "none",
+      "important"
+    );
+
+    sentenceInput.style.setProperty(
+      "color",
+      "transparent",
+      "important"
+    );
+
+    sentenceInput.style.setProperty(
+      "-webkit-text-fill-color",
+      "transparent",
+      "important"
+    );
+
+    sentenceInput.style.setProperty(
+      "caret-color",
+      "#e58bb0",
+      "important"
+    );
+
+    sentenceInput.style.setProperty(
+      "text-align",
+      "left",
+      "important"
+    );
+
+    sentenceInput.style.setProperty(
+      "padding",
+      "0",
+      "important"
+    );
+
+    sentenceInput.style.setProperty(
+      "margin",
+      "0",
+      "important"
+    );
+  }
+
+
+  /* =========================================
+     POSITION INPUT
+     ========================================= */
+
+  function positionInput() {
+
+    requestAnimationFrame(() => {
+
+      const writingArea =
+        document.querySelector(
+          ".sentence-writing-area"
+        );
+
+      if (!writingArea) return;
+
+
+      const areaRect =
+        writingArea.getBoundingClientRect();
+
+      const ghostRect =
+        ghostSentence.getBoundingClientRect();
+
+
+      /*
+       * Input gets the same visual position
+       * as the ghost sentence.
+       */
+
+      sentenceInput.style.setProperty(
+        "position",
+        "absolute",
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "left",
+        `${ghostRect.left - areaRect.left}px`,
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "top",
+        `${ghostRect.top - areaRect.top}px`,
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "width",
+        `${ghostRect.width}px`,
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "height",
+        `${ghostRect.height}px`,
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "transform",
+        "none",
+        "important"
+      );
+
+
+      const ghostStyle =
+        window.getComputedStyle(
+          ghostSentence
+        );
+
+
+      sentenceInput.style.setProperty(
+        "font-family",
+        ghostStyle.fontFamily,
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "font-size",
+        ghostStyle.fontSize,
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "font-weight",
+        ghostStyle.fontWeight,
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "line-height",
+        ghostStyle.lineHeight,
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "letter-spacing",
+        ghostStyle.letterSpacing,
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "word-spacing",
+        ghostStyle.wordSpacing,
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "box-sizing",
+        "border-box",
+        "important"
+      );
+
+
+      prepareInput();
+    });
   }
 
 
@@ -183,11 +335,9 @@ document.addEventListener("DOMContentLoaded", () => {
     sentenceProgressText.textContent =
       `${currentSentenceIndex + 1} / ${totalSentences}`;
 
-
     const percentage =
       (currentSentenceIndex /
         totalSentences) * 100;
-
 
     sentenceProgressFill.style.width =
       `${percentage}%`;
@@ -195,89 +345,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     UPDATE VISUAL TYPING
+     GHOST
      ========================================= */
 
-  function updateVisualText() {
+  function updateGhost() {
 
     const sentence =
       story.sentences[
         currentSentenceIndex
       ].text;
 
+    ghostSentence.textContent =
+      sentence;
 
-    const typed =
-      sentenceInput.value;
-
-
-    /*
-     * IMPORTANT:
-     *
-     * The ghost NEVER moves.
-     *
-     * typedSentence uses the EXACT
-     * same font and position.
-     */
-
-
-    typedSentence.textContent =
-      typed;
-
-
-    /*
-     * If nothing has been typed,
-     * hide the typed layer.
-     */
-
-    if (!typed) {
-
-      typedSentence.style.opacity =
-        "0";
-
-    } else {
-
-      typedSentence.style.opacity =
-        "1";
-    }
-
-
-    /*
-     * Keep the input active.
-     */
-
-    sentenceInput.style.color =
-      "transparent";
-
-
-    sentenceInput.style.webkitTextFillColor =
-      "transparent";
-
-
-    /*
-     * Check whether the user has typed
-     * more than the original sentence.
-     */
-
-    if (
-      typed.length >
-      sentence.length
-    ) {
-
-      typedSentence.style.color =
-        "#d8788d";
-
-    } else {
-
-      typedSentence.style.color =
-        "";
-
-    }
-
+    positionInput();
   }
 
 
   /* =========================================
-     GET COMPLETED WORDS
+     COMPLETED WORDS
      ========================================= */
 
   function getCompletedWords() {
@@ -285,15 +371,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const typed =
       sentenceInput.value;
 
-
     if (!typed) {
       return [];
     }
-
-
-    /*
-     * A word becomes complete after SPACE.
-     */
 
     if (!typed.endsWith(" ")) {
 
@@ -303,7 +383,6 @@ document.addEventListener("DOMContentLoaded", () => {
         .filter(Boolean);
     }
 
-
     return typed
       .trim()
       .split(/\s+/)
@@ -312,7 +391,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     PRONOUNCE WORDS
+     WORD PRONUNCIATION
      ========================================= */
 
   function pronounceCompletedWords() {
@@ -322,12 +401,8 @@ document.addEventListener("DOMContentLoaded", () => {
         currentSentenceIndex
       ].text;
 
-
     const expectedWords =
-      sentence
-        .trim()
-        .split(/\s+/);
-
+      sentence.trim().split(/\s+/);
 
     const completedWords =
       getCompletedWords();
@@ -341,10 +416,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const index =
         spokenWordCount;
 
-
       const typedWord =
         completedWords[index];
-
 
       const expectedWord =
         expectedWords[index];
@@ -376,45 +449,24 @@ document.addEventListener("DOMContentLoaded", () => {
         currentSentenceIndex
       ].text;
 
-
     const typed =
-      normalize(
-        sentenceInput.value
-      );
-
+      normalize(sentenceInput.value);
 
     const correct =
       normalize(sentence);
 
 
-    /*
-     * CORRECT
-     */
-
     if (typed === correct) {
-
-      typedSentence.textContent =
-        sentence;
-
-
-      typedSentence.style.opacity =
-        "1";
-
-
-      typedSentence.style.color =
-        "";
-
 
       typingFeedback.textContent =
         "✓ Perfect! Great job!";
-
 
       typingFeedback.className =
         "typing-feedback success";
 
 
       /*
-       * Speak full sentence.
+       * Speak the complete sentence.
        */
 
       speak(sentence);
@@ -436,10 +488,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    /*
-     * NOT COMPLETE
-     */
-
     if (
       sentenceInput.value.length >=
       sentence.length
@@ -448,7 +496,6 @@ document.addEventListener("DOMContentLoaded", () => {
       typingFeedback.textContent =
         "Try Again ✨";
 
-
       typingFeedback.className =
         "typing-feedback error";
 
@@ -456,7 +503,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       typingFeedback.textContent =
         "";
-
 
       typingFeedback.className =
         "typing-feedback";
@@ -476,12 +522,33 @@ document.addEventListener("DOMContentLoaded", () => {
     "input",
     () => {
 
-      updateVisualText();
+      updateGhost();
 
       pronounceCompletedWords();
 
       checkSentence();
+    }
+  );
 
+
+  /* =========================================
+     CLICK INPUT
+     ========================================= */
+
+  sentenceInput.addEventListener(
+    "click",
+    () => {
+
+      prepareInput();
+    }
+  );
+
+
+  sentenceInput.addEventListener(
+    "focus",
+    () => {
+
+      prepareInput();
     }
   );
 
@@ -499,9 +566,7 @@ document.addEventListener("DOMContentLoaded", () => {
           currentSentenceIndex
         ].text;
 
-
       speak(sentence);
-
     }
   );
 
@@ -527,17 +592,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
 
-      /* =====================================
-         STORY COMPLETE
-         ===================================== */
-
       sentenceNumber.textContent =
         "🎉 Story Complete!";
 
-
       currentWordMeaning.textContent =
         "أحسنتِ!";
-
 
       currentWordIPA.textContent =
         "";
@@ -547,13 +606,8 @@ document.addEventListener("DOMContentLoaded", () => {
         "You completed the story!";
 
 
-      typedSentence.textContent =
-        "";
-
-
       sentenceInput.value =
         "";
-
 
       sentenceInput.disabled =
         true;
@@ -561,7 +615,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       typingFeedback.textContent =
         "✓ Story completed successfully!";
-
 
       typingFeedback.className =
         "typing-feedback success";
@@ -574,10 +627,8 @@ document.addEventListener("DOMContentLoaded", () => {
       sentenceProgressText.textContent =
         `${totalSentences} / ${totalSentences}`;
 
-
       sentenceProgressFill.style.width =
         "100%";
-
     }
   );
 
@@ -606,88 +657,64 @@ document.addEventListener("DOMContentLoaded", () => {
       "";
 
 
-    /*
-     * Clear typing.
-     */
-
     sentenceInput.value =
       "";
-
 
     sentenceInput.disabled =
       false;
 
+    sentenceInput.readOnly =
+      false;
 
-    /*
-     * Reset word speech.
-     */
 
     spokenWordCount =
       0;
 
 
-    /*
-     * Reset feedback.
-     */
-
     typingFeedback.textContent =
       "";
-
 
     typingFeedback.className =
       "typing-feedback";
 
 
-    /*
-     * Disable next.
-
-     */
-
     nextSentenceButton.disabled =
       true;
 
-
-    /*
-     * Full ghost sentence.
-     */
 
     ghostSentence.textContent =
       sentence.text;
 
 
-    /*
-     * Empty typed layer.
-
-     */
-
-    typedSentence.textContent =
-      "";
-
-
-    typedSentence.style.opacity =
-      "0";
-
-
-    /*
-     * Progress.
-
-     */
-
     updateProgress();
 
 
-    /*
-     * Focus keyboard.
-
-     */
-
     setTimeout(() => {
+
+      prepareInput();
+
+      positionInput();
 
       sentenceInput.focus();
 
-    }, 100);
-
+    }, 150);
   }
+
+
+  /* =========================================
+     RESIZE
+     ========================================= */
+
+  window.addEventListener(
+    "resize",
+    () => {
+
+      if (!sentenceInput.disabled) {
+        positionInput();
+      }
+
+    }
+  );
 
 
   /* =========================================
