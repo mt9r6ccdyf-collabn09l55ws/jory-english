@@ -2071,3 +2071,98 @@ body.dark .story-page .sentence-input {
   .story-page .sentence-input {
     height: 55px;
   }
+/* ==========================================
+   FINAL TEXT OVERLAY FIX
+   ========================================== */
+
+.story-page .ghost-sentence {
+  display: block;
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform: translate(-50%, -50%);
+
+  width: max-content;
+  max-width: 95%;
+
+  white-space: nowrap;
+
+  text-align: left;
+
+  font-family: inherit;
+  font-size: clamp(28px, 5vw, 58px);
+  font-weight: 700;
+  line-height: 1.2;
+
+  margin: 0;
+  padding: 0;
+
+  z-index: 2;
+}
+
+
+/* الجزء الذي كتبته */
+.story-page .typed-visible {
+  color: #493c46;
+  opacity: 1;
+}
+
+
+/* الجزء الذي لم تكتبيه */
+.story-page .ghost-remaining {
+  color: #aaa1a9;
+  opacity: 0.28;
+}
+
+
+/* الإدخال نفسه غير مرئي */
+.story-page .sentence-input {
+  position: absolute;
+
+  z-index: 5;
+
+  background: transparent !important;
+
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+
+  caret-color: #e58bb0;
+
+  font-family: inherit;
+
+  opacity: 1;
+}
+
+
+/* بعد اكتمال الجملة */
+.story-page .typed-visible.complete {
+  color: #493c46;
+  opacity: 1;
+}
+
+
+/* Dark mode */
+body.dark .story-page .typed-visible {
+  color: #fff4fa;
+}
+
+body.dark .story-page .ghost-remaining {
+  color: #d9ced6;
+  opacity: 0.25;
+}
+
+
+/* Mobile */
+@media (max-width: 768px) {
+
+  .story-page .ghost-sentence {
+    font-size: clamp(21px, 7vw, 40px);
+  }
+
+}
