@@ -6,15 +6,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const storyLevel = document.getElementById("storyLevel");
 
   const sentenceNumber = document.getElementById("sentenceNumber");
-  const currentWordMeaning = document.getElementById("currentWordMeaning");
-  const currentWordIPA = document.getElementById("currentWordIPA");
+  const currentWordMeaning =
+    document.getElementById("currentWordMeaning");
 
-  const ghostSentence = document.getElementById("ghostSentence");
-  const sentenceInput = document.getElementById("sentenceInput");
+  const currentWordIPA =
+    document.getElementById("currentWordIPA");
 
-  const typingFeedback = document.getElementById("typingFeedback");
-  const sentenceAudioButton = document.getElementById("sentenceAudioButton");
-  const nextSentenceButton = document.getElementById("nextSentenceButton");
+  const ghostSentence =
+    document.getElementById("ghostSentence");
+
+  const sentenceInput =
+    document.getElementById("sentenceInput");
+
+  const typingFeedback =
+    document.getElementById("typingFeedback");
+
+  const sentenceAudioButton =
+    document.getElementById("sentenceAudioButton");
+
+  const nextSentenceButton =
+    document.getElementById("nextSentenceButton");
 
   const sentenceProgressText =
     document.getElementById("sentenceProgressText");
@@ -22,76 +33,84 @@ document.addEventListener("DOMContentLoaded", () => {
   const sentenceProgressFill =
     document.getElementById("sentenceProgressFill");
 
-  const backToLevel = document.getElementById("backToLevel");
+  const backToLevel =
+    document.getElementById("backToLevel");
 
-  /* -----------------------------------------
-     Get Story
-  ----------------------------------------- */
 
-  const params = new URLSearchParams(window.location.search);
-  const storyId = params.get("story");
-  const story = getStoryById(storyId);
+  /* =========================================
+     GET STORY
+     ========================================= */
+
+  const params =
+    new URLSearchParams(window.location.search);
+
+  const storyId =
+    params.get("story");
+
+  const story =
+    getStoryById(storyId);
+
 
   if (!story) {
+
     storyTitle.textContent = "Story not found";
+
     storyDescription.textContent =
       "Sorry, this story could not be found.";
 
     sentenceInput.disabled = true;
+
     return;
   }
 
+
+  /* =========================================
+     VARIABLES
+     ========================================= */
+
   let currentSentenceIndex = 0;
 
-  const totalSentences = story.sentences.length;
+  const totalSentences =
+    story.sentences.length;
 
-  /* -----------------------------------------
-     Story Information
-  ----------------------------------------- */
-
-  storyTitle.textContent = story.title;
-  storyDescription.textContent = story.description;
-  storyEmoji.textContent = story.emoji;
-
-  const level = story.level || "A1";
-
-  storyLevel.textContent = level;
-
-  document.title = `${story.title} | Jory English 🎀`;
-
-  backToLevel.href = `level.html?level=${level}`;
-  backToLevel.textContent = `← Back to ${level}`;
+  let lastCompletedWordCount = 0;
 
 
-  /* -----------------------------------------
-     Speech
-  ----------------------------------------- */
-
-  function speak(text) {
-
-    if (!text) return;
-
-    if (!("speechSynthesis" in window)) return;
-
-    window.speechSynthesis.cancel();
-
-    const utterance =
-      new SpeechSynthesisUtterance(text);
-
-    utterance.lang = "en-US";
-
-    utterance.rate = 0.82;
-    utterance.pitch = 1;
-
-    window.speechSynthesis.speak(utterance);
-  }
+  const level =
+    story.level || "A1";
 
 
-  /* -----------------------------------------
-     Clean Text
-  ----------------------------------------- */
+  /* =========================================
+     STORY INFO
+     ========================================= */
 
-  function cleanText(text) {
+  storyTitle.textContent =
+    story.title;
+
+  storyDescription.textContent =
+    story.description;
+
+  storyEmoji.textContent =
+    story.emoji;
+
+  storyLevel.textContent =
+    level;
+
+  document.title =
+    `${story.title} | Jory English 🎀`;
+
+  backToLevel.href =
+    `level.html?level=${level}`;
+
+  backToLevel.textContent =
+    `← Back to ${level}`;
+
+
+  /* =========================================
+     TEXT NORMALIZATION
+     ========================================= */
+
+  function normalize(text) {
 
     return text
       .toLowerCase()
@@ -101,169 +120,196 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  /* -----------------------------------------
-     Progress
-  ----------------------------------------- */
+  /* =========================================
+     SPEAK
+     ========================================= */
+
+  function speak(text) {
+
+    if (!text) return;
+
+    if (!("speechSynthesis" in window)) {
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+
+    const voice =
+      new SpeechSynthesisUtterance(text);
+
+    voice.lang = "en-US";
+
+    voice.rate = 0.82;
+
+    voice.pitch = 1;
+
+    window.speechSynthesis.speak(voice);
+  }
+
+
+  /* =========================================
+     PROGRESS
+     ========================================= */
 
   function updateProgress() {
 
     sentenceProgressText.textContent =
       `${currentSentenceIndex + 1} / ${totalSentences}`;
 
-    const percent =
+    const percentage =
       (currentSentenceIndex / totalSentences) * 100;
 
     sentenceProgressFill.style.width =
-      `${percent}%`;
+      `${percentage}%`;
   }
 
 
-  /* -----------------------------------------
-     Make Input Match Ghost Text
-  ----------------------------------------- */
+  /* =========================================
+     ALIGN INPUT WITH GHOST
+     ========================================= */
 
-  function alignWritingText() {
-
-    /*
-      We measure the transparent sentence and give
-      the input exactly the same width.
-
-      This makes:
-
-      My name is Lamar.
-      ↑
-      My name is Lamar.
-
-      start at exactly the same position.
-    */
+  function alignInput() {
 
     requestAnimationFrame(() => {
 
-      const ghostWidth =
-        ghostSentence.getBoundingClientRect().width;
+      /*
+       * The ghost and input use the same
+       * font properties.
+       */
+
+      const ghostRect =
+        ghostSentence.getBoundingClientRect();
+
+      const areaRect =
+        document
+          .querySelector(".sentence-writing-area")
+          .getBoundingClientRect();
+
+
+      /*
+       * Same width as the ghost text.
+       */
 
       sentenceInput.style.width =
-        `${ghostWidth}px`;
+        `${ghostRect.width}px`;
+
+
+      /*
+       * Same left position.
+       */
+
+      sentenceInput.style.left =
+        `${ghostRect.left - areaRect.left}px`;
+
+
+      /*
+       * Same vertical position.
+       */
+
+      sentenceInput.style.top =
+        `${ghostRect.top - areaRect.top}px`;
+
+
+      /*
+       * Important:
+       * Do NOT use translate here.
+       */
+
+      sentenceInput.style.transform =
+        "none";
 
     });
   }
 
 
-  /* -----------------------------------------
-     Load Sentence
-  ----------------------------------------- */
+  /* =========================================
+     GET COMPLETED WORDS
+     ========================================= */
 
-  function loadSentence() {
+  function getCompletedWords() {
+
+    const typed =
+      sentenceInput.value;
+
+    /*
+     * A word becomes complete when
+     * the user types a space after it.
+     */
+
+    const parts =
+      typed.split(/\s+/);
+
+    if (
+      typed.length === 0 ||
+      !typed.endsWith(" ")
+    ) {
+
+      parts.pop();
+
+    }
+
+    return parts.filter(Boolean);
+  }
+
+
+  /* =========================================
+     PRONOUNCE NEW WORD
+     ========================================= */
+
+  function pronounceNewWords() {
 
     const sentence =
       story.sentences[currentSentenceIndex];
 
-    sentenceNumber.textContent =
-      `Sentence ${currentSentenceIndex + 1}`;
-
-    currentWordMeaning.textContent =
-      sentence.translation || "";
-
-    currentWordIPA.textContent = "";
-
-    ghostSentence.textContent =
-      sentence.text;
-
-    sentenceInput.value = "";
-
-    sentenceInput.disabled = false;
-
-    sentenceInput.style.textAlign = "left";
-
-    typingFeedback.textContent = "";
-
-    typingFeedback.className =
-      "typing-feedback";
-
-    nextSentenceButton.disabled = true;
-
-    updateProgress();
-
-    /*
-      Reset word pronunciation.
-    */
-    spokenWordIndex = 0;
-
-    /*
-      Align the input exactly with
-      the transparent sentence.
-    */
-    alignWritingText();
-
-    setTimeout(() => {
-      sentenceInput.focus();
-      alignWritingText();
-    }, 100);
-
-  }
-
-
-  /* -----------------------------------------
-     Word Pronunciation
-  ----------------------------------------- */
-
-  let spokenWordIndex = 0;
-
-
-  function pronounceCompletedWords() {
-
-    const sentence =
-      story.sentences[currentSentenceIndex].text;
-
     const expectedWords =
-      sentence.trim().split(/\s+/);
+      sentence.text.trim().split(/\s+/);
 
-    const typedWords =
-      sentenceInput.value.split(/\s+/);
-
-    /*
-      Remove the last unfinished word.
-    */
     const completedWords =
-      sentenceInput.value.endsWith(" ")
-        ? typedWords.filter(Boolean)
-        : typedWords.slice(0, -1).filter(Boolean);
+      getCompletedWords();
 
 
     /*
-      Check every newly completed word.
-    */
+     * Only pronounce NEW completed words.
+     */
+
     while (
-      spokenWordIndex < completedWords.length
+      lastCompletedWordCount <
+      completedWords.length
     ) {
 
+      const index =
+        lastCompletedWordCount;
+
       const typedWord =
-        completedWords[spokenWordIndex];
+        completedWords[index];
 
       const expectedWord =
-        expectedWords[spokenWordIndex];
+        expectedWords[index];
+
 
       if (
-        cleanText(typedWord) ===
-        cleanText(expectedWord)
+        expectedWord &&
+        normalize(typedWord) ===
+        normalize(expectedWord)
       ) {
 
         /*
-          🔊 Speak the word immediately
-        */
+         * 🔊 Pronounce the completed word.
+         */
+
         speak(expectedWord);
 
       }
 
-      spokenWordIndex++;
-    }
 
+      lastCompletedWordCount++;
+    }
   }
 
 
-  /* -----------------------------------------
-     Check Whole Sentence
-  ----------------------------------------- */
+  /* =========================================
+     CHECK SENTENCE
+     ========================================= */
 
   function checkSentence() {
 
@@ -271,11 +317,15 @@ document.addEventListener("DOMContentLoaded", () => {
       story.sentences[currentSentenceIndex];
 
     const typed =
-      cleanText(sentenceInput.value);
+      normalize(sentenceInput.value);
 
     const correct =
-      cleanText(sentence.text);
+      normalize(sentence.text);
 
+
+    /*
+     * COMPLETE + CORRECT
+     */
 
     if (typed === correct) {
 
@@ -285,14 +335,19 @@ document.addEventListener("DOMContentLoaded", () => {
       typingFeedback.className =
         "typing-feedback success";
 
+
       /*
-        🔊 Speak the complete sentence
-      */
+       * 🔊 Pronounce the whole sentence.
+       */
+
       speak(sentence.text);
 
-      sentenceInput.disabled = true;
 
-      nextSentenceButton.disabled = false;
+      sentenceInput.disabled =
+        true;
+
+      nextSentenceButton.disabled =
+        false;
 
       sentenceProgressFill.style.width =
         "100%";
@@ -302,9 +357,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /*
-      If the user has typed enough characters
-      but the sentence is still wrong.
-    */
+     * WRONG ANSWER
+     */
 
     if (
       sentenceInput.value.length >=
@@ -319,43 +373,120 @@ document.addEventListener("DOMContentLoaded", () => {
 
     } else {
 
-      typingFeedback.textContent = "";
+      typingFeedback.textContent =
+        "";
 
       typingFeedback.className =
         "typing-feedback";
-
     }
 
-    nextSentenceButton.disabled = true;
+
+    nextSentenceButton.disabled =
+      true;
+  }
+
+
+  /* =========================================
+     LOAD SENTENCE
+     ========================================= */
+
+  function loadSentence() {
+
+    const sentence =
+      story.sentences[currentSentenceIndex];
+
+
+    sentenceNumber.textContent =
+      `Sentence ${currentSentenceIndex + 1}`;
+
+
+    currentWordMeaning.textContent =
+      sentence.translation || "";
+
+
+    currentWordIPA.textContent =
+      "";
+
+
+    /*
+     * Put the SAME sentence
+     * into the transparent guide.
+     */
+
+    ghostSentence.textContent =
+      sentence.text;
+
+
+    sentenceInput.value =
+      "";
+
+
+    sentenceInput.disabled =
+      false;
+
+
+    typingFeedback.textContent =
+      "";
+
+    typingFeedback.className =
+      "typing-feedback";
+
+
+    nextSentenceButton.disabled =
+      true;
+
+
+    lastCompletedWordCount =
+      0;
+
+
+    updateProgress();
+
+
+    /*
+     * Wait for browser to render
+     * then align the typing layer.
+     */
+
+    requestAnimationFrame(() => {
+
+      alignInput();
+
+      sentenceInput.focus();
+
+    });
 
   }
 
 
-  /* -----------------------------------------
-     Typing
-  ----------------------------------------- */
+  /* =========================================
+     TYPING
+     ========================================= */
 
   sentenceInput.addEventListener(
     "input",
     () => {
 
       /*
-        🔊 Check completed words
-      */
-      pronounceCompletedWords();
+       * 🔊 Pronounce completed words.
+       */
+
+      pronounceNewWords();
+
 
       /*
-        Check complete sentence
-      */
+       * Check the complete sentence.
+       */
+
       checkSentence();
 
     }
   );
 
 
-  /* -----------------------------------------
-     Listen Button
-  ----------------------------------------- */
+  /* =========================================
+     LISTEN BUTTON
+     ========================================= */
 
   sentenceAudioButton.addEventListener(
     "click",
@@ -370,9 +501,9 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
 
-  /* -----------------------------------------
-     Next Sentence
-  ----------------------------------------- */
+  /* =========================================
+     NEXT BUTTON
+     ========================================= */
 
   nextSentenceButton.addEventListener(
     "click",
@@ -391,35 +522,49 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
 
-      /* -----------------------------------------
-         Story Complete
-      ----------------------------------------- */
+      /* =====================================
+         STORY COMPLETE
+         ===================================== */
 
       sentenceNumber.textContent =
         "🎉 Story Complete!";
 
+
       currentWordMeaning.textContent =
         "أحسنتِ!";
 
-      currentWordIPA.textContent = "";
+
+      currentWordIPA.textContent =
+        "";
+
 
       ghostSentence.textContent =
         "You completed the story!";
 
-      sentenceInput.value = "";
 
-      sentenceInput.disabled = true;
+      sentenceInput.value =
+        "";
+
+
+      sentenceInput.disabled =
+        true;
+
 
       typingFeedback.textContent =
         "✓ Story completed successfully!";
 
+
       typingFeedback.className =
         "typing-feedback success";
 
-      nextSentenceButton.disabled = true;
+
+      nextSentenceButton.disabled =
+        true;
+
 
       sentenceProgressText.textContent =
         `${totalSentences} / ${totalSentences}`;
+
 
       sentenceProgressFill.style.width =
         "100%";
@@ -428,19 +573,25 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
 
-  /* -----------------------------------------
-     Resize
-  ----------------------------------------- */
+  /* =========================================
+     RESIZE
+     ========================================= */
 
   window.addEventListener(
     "resize",
-    alignWritingText
+    () => {
+
+      if (!sentenceInput.disabled) {
+        alignInput();
+      }
+
+    }
   );
 
 
-  /* -----------------------------------------
-     Start
-  ----------------------------------------- */
+  /* =========================================
+     START
+     ========================================= */
 
   loadSentence();
 
