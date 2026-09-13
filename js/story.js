@@ -1,11 +1,24 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-  const storyTitle = document.getElementById("storyTitle");
-  const storyDescription = document.getElementById("storyDescription");
-  const storyEmoji = document.getElementById("storyEmoji");
-  const storyLevel = document.getElementById("storyLevel");
+  /* =========================================
+     ELEMENTS
+     ========================================= */
 
-  const sentenceNumber = document.getElementById("sentenceNumber");
+  const storyTitle =
+    document.getElementById("storyTitle");
+
+  const storyDescription =
+    document.getElementById("storyDescription");
+
+  const storyEmoji =
+    document.getElementById("storyEmoji");
+
+  const storyLevel =
+    document.getElementById("storyLevel");
+
+  const sentenceNumber =
+    document.getElementById("sentenceNumber");
+
   const currentWordMeaning =
     document.getElementById("currentWordMeaning");
 
@@ -38,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     STORY
+     GET STORY
      ========================================= */
 
   const params =
@@ -53,7 +66,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!story) {
 
-    storyTitle.textContent = "Story not found";
+    storyTitle.textContent =
+      "Story not found";
 
     storyDescription.textContent =
       "Sorry, this story could not be found.";
@@ -64,12 +78,16 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
+  /* =========================================
+     VARIABLES
+     ========================================= */
+
   let currentSentenceIndex = 0;
 
   const totalSentences =
     story.sentences.length;
 
-  let lastSpokenWordCount = 0;
+  let spokenWordCount = 0;
 
 
   const level =
@@ -77,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     STORY INFO
+     STORY INFORMATION
      ========================================= */
 
   storyTitle.textContent =
@@ -103,7 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     NORMALIZE
+     NORMALIZE TEXT
      ========================================= */
 
   function normalize(text) {
@@ -128,14 +146,24 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    window.speechSynthesis.cancel();
-
     const utterance =
       new SpeechSynthesisUtterance(text);
 
-    utterance.lang = "en-US";
-    utterance.rate = 0.82;
-    utterance.pitch = 1;
+    utterance.lang =
+      "en-US";
+
+    utterance.rate =
+      0.82;
+
+    utterance.pitch =
+      1;
+
+    /*
+     * Do NOT cancel previous speech.
+     *
+     * This allows completed words
+     * to be spoken in sequence.
+     */
 
     window.speechSynthesis.speak(
       utterance
@@ -144,7 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     PROGRESS
+     UPDATE PROGRESS
      ========================================= */
 
   function updateProgress() {
@@ -161,10 +189,180 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     DISPLAY GHOST
+     ALIGN INPUT EXACTLY WITH GHOST
      ========================================= */
 
-  function updateGhost() {
+  function alignInputWithGhost() {
+
+    requestAnimationFrame(() => {
+
+      const writingArea =
+        document.querySelector(
+          ".sentence-writing-area"
+        );
+
+      if (!writingArea) return;
+
+
+      const ghostRect =
+        ghostSentence.getBoundingClientRect();
+
+      const areaRect =
+        writingArea.getBoundingClientRect();
+
+
+      /*
+       * Position input at EXACTLY
+       * the same position as ghost text.
+       */
+
+      const left =
+        ghostRect.left -
+        areaRect.left;
+
+      const top =
+        ghostRect.top -
+        areaRect.top;
+
+
+      sentenceInput.style.setProperty(
+        "position",
+        "absolute",
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "left",
+        `${left}px`,
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "top",
+        `${top}px`,
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "width",
+        `${ghostRect.width}px`,
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "height",
+        `${ghostRect.height}px`,
+        "important"
+      );
+
+
+      /*
+       * IMPORTANT:
+       * The input starts from the SAME
+       * left edge as the transparent text.
+       */
+
+      sentenceInput.style.setProperty(
+        "transform",
+        "none",
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "text-align",
+        "left",
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "padding",
+        "0",
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "margin",
+        "0",
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "border",
+        "none",
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "outline",
+        "none",
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "background",
+        "transparent",
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "box-shadow",
+        "none",
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "color",
+        "#493c46",
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "font-size",
+        getComputedStyle(
+          ghostSentence
+        ).fontSize,
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "font-family",
+        getComputedStyle(
+          ghostSentence
+        ).fontFamily,
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "font-weight",
+        getComputedStyle(
+          ghostSentence
+        ).fontWeight,
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "line-height",
+        getComputedStyle(
+          ghostSentence
+        ).lineHeight,
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "caret-color",
+        "#e58bb0",
+        "important"
+      );
+
+    });
+  }
+
+
+  /* =========================================
+     UPDATE GHOST SENTENCE
+     ========================================= */
+
+  function updateGhostSentence() {
 
     const sentence =
       story.sentences[
@@ -176,50 +374,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /*
-     * Only change the GHOST.
+     * The transparent sentence NEVER changes.
      *
-     * We do NOT change the input.
+     * It always stays:
      *
-     * Therefore Backspace works normally.
+     * My name is Lamar.
      */
 
-    ghostSentence.innerHTML = "";
+    ghostSentence.textContent =
+      sentence;
 
 
-    const typedPart =
-      document.createElement("span");
+    /*
+     * Keep the typed text above it.
+     */
 
-    typedPart.className =
-      "typed-visible";
-
-    typedPart.textContent =
-      typed;
+    sentenceInput.style.color =
+      "#493c46";
 
 
-    const remainingPart =
-      document.createElement("span");
+    /*
+     * Re-align after every change.
+     */
 
-    remainingPart.className =
-      "ghost-remaining";
-
-    remainingPart.textContent =
-      sentence.substring(
-        typed.length
-      );
-
-
-    ghostSentence.appendChild(
-      typedPart
-    );
-
-    ghostSentence.appendChild(
-      remainingPart
-    );
+    alignInputWithGhost();
   }
 
 
   /* =========================================
-     COMPLETED WORDS
+     GET COMPLETED WORDS
      ========================================= */
 
   function getCompletedWords() {
@@ -227,6 +410,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const typed =
       sentenceInput.value;
 
+
+    if (!typed) {
+      return [];
+    }
+
+
+    /*
+     * A word becomes complete
+     * after the user presses SPACE.
+     */
 
     if (!typed.endsWith(" ")) {
 
@@ -238,13 +431,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     return typed
+      .trim()
       .split(/\s+/)
       .filter(Boolean);
   }
 
 
   /* =========================================
-     WORD SPEECH
+     PRONOUNCE COMPLETED WORDS
      ========================================= */
 
   function pronounceCompletedWords() {
@@ -266,12 +460,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     while (
-      lastSpokenWordCount <
+      spokenWordCount <
       completedWords.length
     ) {
 
       const index =
-        lastSpokenWordCount;
+        spokenWordCount;
 
       const typedWord =
         completedWords[index];
@@ -287,14 +481,14 @@ document.addEventListener("DOMContentLoaded", () => {
       ) {
 
         /*
-         * 🔊 Speak the completed word.
+         * 🔊 WORD PRONUNCIATION
          */
 
         speak(expectedWord);
       }
 
 
-      lastSpokenWordCount++;
+      spokenWordCount++;
     }
   }
 
@@ -321,6 +515,10 @@ document.addEventListener("DOMContentLoaded", () => {
       normalize(sentence);
 
 
+    /*
+     * COMPLETE AND CORRECT
+     */
+
     if (typed === correct) {
 
       typingFeedback.textContent =
@@ -331,7 +529,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
       /*
-       * 🔊 Full sentence.
+       * 🔊 SPEAK COMPLETE SENTENCE
        */
 
       speak(sentence);
@@ -352,6 +550,10 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+
+    /*
+     * WRONG / INCOMPLETE
+     */
 
     if (
       sentenceInput.value.length >=
@@ -380,7 +582,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     TYPING
+     INPUT EVENT
      ========================================= */
 
   sentenceInput.addEventListener(
@@ -388,24 +590,31 @@ document.addEventListener("DOMContentLoaded", () => {
     () => {
 
       /*
-       * IMPORTANT:
-       * The input itself is NEVER replaced
-       * or rewritten.
-       *
-       * This makes Backspace/Delete work.
+       * Update ghost.
        */
 
-      updateGhost();
+      updateGhostSentence();
+
+
+      /*
+       * Pronounce completed words.
+       */
 
       pronounceCompletedWords();
 
+
+      /*
+       * Check whole sentence.
+       */
+
       checkSentence();
+
     }
   );
 
 
   /* =========================================
-     LISTEN
+     LISTEN BUTTON
      ========================================= */
 
   sentenceAudioButton.addEventListener(
@@ -418,12 +627,13 @@ document.addEventListener("DOMContentLoaded", () => {
         ].text;
 
       speak(sentence);
+
     }
   );
 
 
   /* =========================================
-     NEXT
+     NEXT BUTTON
      ========================================= */
 
   nextSentenceButton.addEventListener(
@@ -444,7 +654,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
       /* =====================================
-         COMPLETE
+         STORY COMPLETE
          ===================================== */
 
       sentenceNumber.textContent =
@@ -457,20 +667,8 @@ document.addEventListener("DOMContentLoaded", () => {
         "";
 
 
-      ghostSentence.innerHTML = "";
-
-      const completeSpan =
-        document.createElement("span");
-
-      completeSpan.className =
-        "typed-visible complete";
-
-      completeSpan.textContent =
+      ghostSentence.textContent =
         "You completed the story!";
-
-      ghostSentence.appendChild(
-        completeSpan
-      );
 
 
       sentenceInput.value =
@@ -526,7 +724,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /*
-     * Clear ONLY the input.
+     * CLEAR INPUT
      */
 
     sentenceInput.value =
@@ -536,9 +734,17 @@ document.addEventListener("DOMContentLoaded", () => {
       false;
 
 
-    lastSpokenWordCount =
+    /*
+     * RESET WORD SPEECH
+     */
+
+    spokenWordCount =
       0;
 
+
+    /*
+     * RESET FEEDBACK
+     */
 
     typingFeedback.textContent =
       "";
@@ -551,17 +757,52 @@ document.addEventListener("DOMContentLoaded", () => {
       true;
 
 
+    /*
+     * SHOW FULL TRANSPARENT SENTENCE
+     */
+
+    ghostSentence.textContent =
+      sentence.text;
+
+
+    /*
+     * UPDATE PROGRESS
+     */
+
     updateProgress();
 
-    updateGhost();
 
+    /*
+     * ALIGN INPUT ON TOP OF GHOST
+     */
 
     setTimeout(() => {
+
+      alignInputWithGhost();
 
       sentenceInput.focus();
 
     }, 100);
+
   }
+
+
+  /* =========================================
+     WINDOW RESIZE
+     ========================================= */
+
+  window.addEventListener(
+    "resize",
+    () => {
+
+      if (!sentenceInput.disabled) {
+
+        alignInputWithGhost();
+
+      }
+
+    }
+  );
 
 
   /* =========================================
