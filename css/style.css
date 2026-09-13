@@ -1521,3 +1521,553 @@ body.dark .progress-track {
     height: 60px;
   }
 }
+/* =========================================
+   STORY TYPING ALIGNMENT FIX
+   ========================================= */
+
+.sentence-writing-area {
+  position: relative;
+  width: 100%;
+  min-height: 170px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+}
+
+/* Transparent guide */
+.ghost-sentence {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform: translate(-50%, -50%);
+
+  width: max-content;
+  max-width: 95%;
+
+  margin: 0;
+  padding: 0;
+
+  white-space: nowrap;
+
+  text-align: left;
+
+  font-family: inherit;
+  font-size: clamp(30px, 5vw, 58px);
+  font-weight: 700;
+  line-height: 1.25;
+
+  color: #aaa1a9;
+  opacity: 0.32;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+
+/* Real typing */
+.sentence-input {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform: translate(-50%, -50%);
+
+  height: 90px;
+
+  padding: 0;
+
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+
+  white-space: nowrap;
+
+  text-align: left !important;
+
+  font-family: inherit;
+  font-size: clamp(30px, 5vw, 58px);
+  font-weight: 700;
+  line-height: 1.25;
+
+  color: #493c46;
+
+  caret-color: #d77da5;
+
+  box-shadow: none !important;
+
+  z-index: 5;
+}
+
+
+/* Don't show an ugly browser input */
+.sentence-input:hover,
+.sentence-input:focus,
+.sentence-input:active {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+
+/* Dark mode */
+body.dark .ghost-sentence {
+  color: #d9ced6;
+  opacity: 0.25;
+}
+
+body.dark .sentence-input {
+  color: #fff4fa;
+  caret-color: #f0a6c8;
+}
+
+
+/* Mobile */
+@media (max-width: 768px) {
+
+  .sentence-writing-area {
+    min-height: 135px;
+  }
+
+  .ghost-sentence,
+  .sentence-input {
+    font-size: clamp(22px, 7vw, 38px);
+  }
+
+  .sentence-input {
+    height: 70px;
+  }
+
+}
+
+
+@media (max-width: 480px) {
+
+  .sentence-writing-area {
+    min-height: 115px;
+  }
+
+  .ghost-sentence,
+  .sentence-input {
+    font-size: 21px;
+  }
+
+  .sentence-input {
+    height: 60px;
+  }
+
+}
+/* =========================================
+   STORY TYPING ALIGNMENT FIX
+   ========================================= */
+
+.sentence-writing-area {
+  position: relative;
+  width: 100%;
+  min-height: 170px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+}
+
+/* Transparent guide */
+.ghost-sentence {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform: translate(-50%, -50%);
+
+  width: max-content;
+  max-width: 95%;
+
+  margin: 0;
+  padding: 0;
+
+  white-space: nowrap;
+
+  text-align: left;
+
+  font-family: inherit;
+  font-size: clamp(30px, 5vw, 58px);
+  font-weight: 700;
+  line-height: 1.25;
+
+  color: #aaa1a9;
+  opacity: 0.32;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+
+/* Real typing */
+.sentence-input {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform: translate(-50%, -50%);
+
+  height: 90px;
+
+  padding: 0;
+
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+
+  white-space: nowrap;
+
+  text-align: left !important;
+
+  font-family: inherit;
+  font-size: clamp(30px, 5vw, 58px);
+  font-weight: 700;
+  line-height: 1.25;
+
+  color: #493c46;
+
+  caret-color: #d77da5;
+
+  box-shadow: none !important;
+
+  z-index: 5;
+}
+
+
+/* Don't show an ugly browser input */
+.sentence-input:hover,
+.sentence-input:focus,
+.sentence-input:active {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+
+/* Dark mode */
+body.dark .ghost-sentence {
+  color: #d9ced6;
+  opacity: 0.25;
+}
+
+body.dark .sentence-input {
+  color: #fff4fa;
+  caret-color: #f0a6c8;
+}
+
+
+/* Mobile */
+@media (max-width: 768px) {
+
+  .sentence-writing-area {
+    min-height: 135px;
+  }
+
+  .ghost-sentence,
+  .sentence-input {
+    font-size: clamp(22px, 7vw, 38px);
+  }
+
+  .sentence-input {
+    height: 70px;
+  }
+
+}
+
+
+@media (max-width: 480px) {
+
+  .sentence-writing-area {
+    min-height: 115px;
+  }
+
+  .ghost-sentence,
+  .sentence-input {
+    font-size: 21px;
+  }
+
+  .sentence-input {
+    height: 60px;
+  /* =========================================
+   STORY TYPING ALIGNMENT FIX
+   ========================================= */
+
+.sentence-writing-area {
+  position: relative;
+  width: 100%;
+  min-height: 170px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+}
+
+/* Transparent guide */
+.ghost-sentence {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform: translate(-50%, -50%);
+
+  width: max-content;
+  max-width: 95%;
+
+  margin: 0;
+  padding: 0;
+
+  white-space: nowrap;
+
+  text-align: left;
+
+  font-family: inherit;
+  font-size: clamp(30px, 5vw, 58px);
+  font-weight: 700;
+  line-height: 1.25;
+
+  color: #aaa1a9;
+  opacity: 0.32;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+
+/* Real typing */
+.sentence-input {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform: translate(-50%, -50%);
+
+  height: 90px;
+
+  padding: 0;
+
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+
+  white-space: nowrap;
+
+  text-align: left !important;
+
+  font-family: inherit;
+  font-size: clamp(30px, 5vw, 58px);
+  font-weight: 700;
+  line-height: 1.25;
+
+  color: #493c46;
+
+  caret-color: #d77da5;
+
+  box-shadow: none !important;
+
+  z-index: 5;
+}
+
+
+/* Don't show an ugly browser input */
+.sentence-input:hover,
+.sentence-input:focus,
+.sentence-input:active {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+
+/* Dark mode */
+body.dark .ghost-sentence {
+  color: #d9ced6;
+  opacity: 0.25;
+}
+
+body.dark .sentence-input {
+  color: #fff4fa;
+  caret-color: #f0a6c8;
+}
+
+
+/* Mobile */
+@media (max-width: 768px) {
+
+  .sentence-writing-area {
+    min-height: 135px;
+  }
+
+  .ghost-sentence,
+  .sentence-input {
+    font-size: clamp(22px, 7vw, 38px);
+  }
+
+  .sentence-input {
+    height: 70px;
+  }
+
+}
+
+
+@media (max-width: 480px) {
+
+  .sentence-writing-area {
+    min-height: 115px;
+  }
+
+  .ghost-sentence,
+  .sentence-input {
+    font-size: 21px;
+  }
+
+  .sentence-input {
+    height: 60px;
+  }
+/* ==========================================
+   JORY ENGLISH - FINAL STORY FIX
+   ========================================== */
+
+.story-page .sentence-writing-area {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* النص الشفاف */
+.story-page .ghost-sentence {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+
+  width: max-content;
+  max-width: 95%;
+
+  margin: 0;
+  padding: 0;
+
+  white-space: nowrap;
+  text-align: left;
+
+  font-family: inherit;
+  font-size: clamp(28px, 5vw, 58px);
+  font-weight: 700;
+  line-height: 1.2;
+
+  color: #aaa;
+  opacity: 0.28;
+
+  pointer-events: none;
+  user-select: none;
+
+  z-index: 1;
+}
+
+
+/* الكتابة فوق النص الشفاف */
+.story-page .sentence-input {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 95%;
+  max-width: 1000px;
+  height: 90px;
+
+  padding: 0;
+  margin: 0;
+
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+
+  background: transparent !important;
+
+  font-family: inherit;
+  font-size: clamp(28px, 5vw, 58px);
+  font-weight: 700;
+  line-height: 1.2;
+
+  text-align: center !important;
+  white-space: nowrap;
+
+  color: #493c46;
+  caret-color: #e58bb0;
+
+  z-index: 2;
+}
+
+
+/* إزالة أي شكل افتراضي للخانة */
+.story-page .sentence-input:focus {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+
+/* الوضع الليلي */
+body.dark .story-page .ghost-sentence {
+  color: #ddd;
+  opacity: 0.22;
+}
+
+body.dark .story-page .sentence-input {
+  color: #fff;
+  caret-color: #f3a8c7;
+}
+
+
+/* الجوال والآيباد */
+@media (max-width: 768px) {
+
+  .story-page .sentence-writing-area {
+    height: 140px;
+  }
+
+  .story-page .ghost-sentence,
+  .story-page .sentence-input {
+    font-size: clamp(21px, 7vw, 40px);
+  }
+
+  .story-page .sentence-input {
+    height: 65px;
+  }
+}
+
+
+@media (max-width: 480px) {
+
+  .story-page .sentence-writing-area {
+    height: 120px;
+  }
+
+  .story-page .ghost-sentence,
+  .story-page .sentence-input {
+    font-size: 21px;
+  }
+
+  .story-page .sentence-input {
+    height: 55px;
+  }
