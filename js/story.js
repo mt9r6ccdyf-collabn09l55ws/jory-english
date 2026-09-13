@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const ghostSentence =
     document.getElementById("ghostSentence");
 
-  const oldInput =
+  const sentenceInput =
     document.getElementById("sentenceInput");
 
   const typingFeedback =
@@ -37,9 +37,9 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("backToLevel");
 
 
-  /* ==========================================
-     GET STORY
-     ========================================== */
+  /* =========================================
+     STORY
+     ========================================= */
 
   const params =
     new URLSearchParams(window.location.search);
@@ -58,6 +58,8 @@ document.addEventListener("DOMContentLoaded", () => {
     storyDescription.textContent =
       "Sorry, this story could not be found.";
 
+    sentenceInput.disabled = true;
+
     return;
   }
 
@@ -74,9 +76,9 @@ document.addEventListener("DOMContentLoaded", () => {
     story.level || "A1";
 
 
-  /* ==========================================
-     STORY INFORMATION
-     ========================================== */
+  /* =========================================
+     STORY INFO
+     ========================================= */
 
   storyTitle.textContent =
     story.title;
@@ -100,60 +102,9 @@ document.addEventListener("DOMContentLoaded", () => {
     `← Back to ${level}`;
 
 
-  /* ==========================================
-     CREATE REAL WRITING AREA
-     ========================================== */
-
-  /*
-   * We replace the old input with a contenteditable
-   * element.
-   *
-   * This means the typed text and ghost text
-   * live inside ONE element.
-   *
-   * No alignment problem.
-   */
-
-  const sentenceEditor =
-    document.createElement("div");
-
-  sentenceEditor.id =
-    "sentenceInput";
-
-  sentenceEditor.className =
-    "sentence-input sentence-editor";
-
-  sentenceEditor.contentEditable =
-    "true";
-
-  sentenceEditor.setAttribute(
-    "role",
-    "textbox"
-  );
-
-  sentenceEditor.setAttribute(
-    "spellcheck",
-    "false"
-  );
-
-  sentenceEditor.setAttribute(
-    "autocomplete",
-    "off"
-  );
-
-  sentenceEditor.setAttribute(
-    "autocapitalize",
-    "off"
-  );
-
-  oldInput.replaceWith(
-    sentenceEditor
-  );
-
-
-  /* ==========================================
-     TEXT NORMALIZATION
-     ========================================== */
+  /* =========================================
+     NORMALIZE
+     ========================================= */
 
   function normalize(text) {
 
@@ -165,9 +116,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  /* ==========================================
-     SPEECH
-     ========================================== */
+  /* =========================================
+     SPEAK
+     ========================================= */
 
   function speak(text) {
 
@@ -177,24 +128,14 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    window.speechSynthesis.cancel();
+
     const utterance =
       new SpeechSynthesisUtterance(text);
 
-    utterance.lang =
-      "en-US";
-
-    utterance.rate =
-      0.82;
-
-    utterance.pitch =
-      1;
-
-    /*
-     * Do not cancel here.
-     *
-     * This allows every completed word
-     * to be spoken.
-     */
+    utterance.lang = "en-US";
+    utterance.rate = 0.82;
+    utterance.pitch = 1;
 
     window.speechSynthesis.speak(
       utterance
@@ -202,9 +143,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  /* ==========================================
+  /* =========================================
      PROGRESS
-     ========================================== */
+     ========================================= */
 
   function updateProgress() {
 
@@ -219,135 +160,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  /* ==========================================
-     GET PLAIN TEXT
-     ========================================== */
+  /* =========================================
+     DISPLAY GHOST
+     ========================================= */
 
-  function getEditorText() {
-
-    return sentenceEditor.innerText
-      .replace(/\u00a0/g, " ");
-  }
-
-
-  /* ==========================================
-     SAVE CARET POSITION
-     ========================================== */
-
-  function getCaretOffset() {
-
-    const selection =
-      window.getSelection();
-
-    if (!selection.rangeCount) {
-      return 0;
-    }
-
-    const range =
-      selection.getRangeAt(0);
-
-    const preRange =
-      range.cloneRange();
-
-    preRange.selectNodeContents(
-      sentenceEditor
-    );
-
-    preRange.setEnd(
-      range.endContainer,
-      range.endOffset
-    );
-
-    return preRange.toString().length;
-  }
-
-
-  /* ==========================================
-     RESTORE CARET
-     ========================================== */
-
-  function setCaretOffset(offset) {
-
-    const selection =
-      window.getSelection();
-
-    const range =
-      document.createRange();
-
-    let currentOffset = 0;
-
-    let found = false;
-
-
-    function walk(node) {
-
-      if (found) return;
-
-      if (node.nodeType === Node.TEXT_NODE) {
-
-        const length =
-          node.textContent.length;
-
-        if (
-          currentOffset + length >=
-          offset
-        ) {
-
-          range.setStart(
-            node,
-            Math.max(
-              0,
-              offset - currentOffset
-            )
-          );
-
-          range.collapse(true);
-
-          found = true;
-
-          return;
-        }
-
-        currentOffset += length;
-
-      } else {
-
-        for (
-          const child of node.childNodes
-        ) {
-
-          walk(child);
-
-          if (found) return;
-        }
-      }
-    }
-
-
-    walk(sentenceEditor);
-
-
-    if (!found) {
-
-      range.selectNodeContents(
-        sentenceEditor
-      );
-
-      range.collapse(false);
-    }
-
-
-    selection.removeAllRanges();
-
-    selection.addRange(range);
-  }
-
-
-  /* ==========================================
-     RENDER SENTENCE
-     ========================================== */
-
-  function renderSentence() {
+  function updateGhost() {
 
     const sentence =
       story.sentences[
@@ -355,92 +172,80 @@ document.addEventListener("DOMContentLoaded", () => {
       ].text;
 
     const typed =
-      getEditorText();
+      sentenceInput.value;
 
 
     /*
-     * How many characters are correct
-     * from the beginning?
+     * Only change the GHOST.
+     *
+     * We do NOT change the input.
+     *
+     * Therefore Backspace works normally.
      */
 
-    let correctLength = 0;
+    ghostSentence.innerHTML = "";
 
 
-    while (
-      correctLength < typed.length &&
-      correctLength < sentence.length &&
-      typed[correctLength] ===
-      sentence[correctLength]
-    ) {
-
-      correctLength++;
-    }
-
-
-    const correctPart =
-      sentence.substring(
-        0,
-        correctLength
-      );
-
-    const remainingPart =
-      sentence.substring(
-        correctLength
-      );
-
-
-    /*
-     * Rebuild the ONE visible sentence.
-     */
-
-    sentenceEditor.innerHTML = "";
-
-
-    const correctSpan =
+    const typedPart =
       document.createElement("span");
 
-    correctSpan.className =
+    typedPart.className =
       "typed-visible";
 
-    correctSpan.textContent =
-      correctPart;
+    typedPart.textContent =
+      typed;
 
 
-    const remainingSpan =
+    const remainingPart =
       document.createElement("span");
 
-    remainingSpan.className =
+    remainingPart.className =
       "ghost-remaining";
 
-    remainingSpan.textContent =
-      remainingPart;
+    remainingPart.textContent =
+      sentence.substring(
+        typed.length
+      );
 
 
-    sentenceEditor.appendChild(
-      correctSpan
+    ghostSentence.appendChild(
+      typedPart
     );
 
-    sentenceEditor.appendChild(
-      remainingSpan
-    );
-
-
-    /*
-     * Restore the caret.
-     */
-
-    setCaretOffset(
-      Math.min(
-        typed.length,
-        sentence.length
-      )
+    ghostSentence.appendChild(
+      remainingPart
     );
   }
 
 
-  /* ==========================================
+  /* =========================================
      COMPLETED WORDS
-     ========================================== */
+     ========================================= */
+
+  function getCompletedWords() {
+
+    const typed =
+      sentenceInput.value;
+
+
+    if (!typed.endsWith(" ")) {
+
+      return typed
+        .split(/\s+/)
+        .slice(0, -1)
+        .filter(Boolean);
+    }
+
+
+    return typed
+      .split(/\s+/)
+      .filter(Boolean);
+  }
+
+
+  /* =========================================
+     WORD SPEECH
+     ========================================= */
 
   function pronounceCompletedWords() {
 
@@ -456,14 +261,8 @@ document.addEventListener("DOMContentLoaded", () => {
         .split(/\s+/);
 
 
-    const typed =
-      getEditorText();
-
-
     const completedWords =
-      typed.endsWith(" ")
-        ? typed.trim().split(/\s+/)
-        : typed.trim().split(/\s+/).slice(0, -1);
+      getCompletedWords();
 
 
     while (
@@ -488,7 +287,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ) {
 
         /*
-         * 🔊 Every completed word speaks.
+         * 🔊 Speak the completed word.
          */
 
         speak(expectedWord);
@@ -500,9 +299,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  /* ==========================================
+  /* =========================================
      CHECK SENTENCE
-     ========================================== */
+     ========================================= */
 
   function checkSentence() {
 
@@ -514,7 +313,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const typed =
       normalize(
-        getEditorText()
+        sentenceInput.value
       );
 
 
@@ -532,14 +331,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
       /*
-       * 🔊 Speak the whole sentence.
+       * 🔊 Full sentence.
        */
 
       speak(sentence);
 
 
-      sentenceEditor.contentEditable =
-        "false";
+      sentenceInput.disabled =
+        true;
 
 
       nextSentenceButton.disabled =
@@ -555,7 +354,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     if (
-      getEditorText().length >=
+      sentenceInput.value.length >=
       sentence.length
     ) {
 
@@ -580,40 +379,34 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  /* ==========================================
-     TYPING EVENT
-     ========================================== */
+  /* =========================================
+     TYPING
+     ========================================= */
 
-  sentenceEditor.addEventListener(
+  sentenceInput.addEventListener(
     "input",
     () => {
 
       /*
-       * Speak completed words.
+       * IMPORTANT:
+       * The input itself is NEVER replaced
+       * or rewritten.
+       *
+       * This makes Backspace/Delete work.
        */
+
+      updateGhost();
 
       pronounceCompletedWords();
-
-
-      /*
-       * Redraw the sentence.
-       */
-
-      renderSentence();
-
-
-      /*
-       * Check full sentence.
-       */
 
       checkSentence();
     }
   );
 
 
-  /* ==========================================
-     LISTEN BUTTON
-     ========================================== */
+  /* =========================================
+     LISTEN
+     ========================================= */
 
   sentenceAudioButton.addEventListener(
     "click",
@@ -629,9 +422,9 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
 
-  /* ==========================================
+  /* =========================================
      NEXT
-     ========================================== */
+     ========================================= */
 
   nextSentenceButton.addEventListener(
     "click",
@@ -650,9 +443,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
 
-      /* ======================================
-         STORY COMPLETE
-         ====================================== */
+      /* =====================================
+         COMPLETE
+         ===================================== */
 
       sentenceNumber.textContent =
         "🎉 Story Complete!";
@@ -664,14 +457,27 @@ document.addEventListener("DOMContentLoaded", () => {
         "";
 
 
-      sentenceEditor.innerHTML =
-        `<span class="typed-visible complete">
-          You completed the story!
-        </span>`;
+      ghostSentence.innerHTML = "";
+
+      const completeSpan =
+        document.createElement("span");
+
+      completeSpan.className =
+        "typed-visible complete";
+
+      completeSpan.textContent =
+        "You completed the story!";
+
+      ghostSentence.appendChild(
+        completeSpan
+      );
 
 
-      sentenceEditor.contentEditable =
-        "false";
+      sentenceInput.value =
+        "";
+
+      sentenceInput.disabled =
+        true;
 
 
       typingFeedback.textContent =
@@ -690,13 +496,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
       sentenceProgressFill.style.width =
         "100%";
+
     }
   );
 
 
-  /* ==========================================
+  /* =========================================
      LOAD SENTENCE
-     ========================================== */
+     ========================================= */
 
   function loadSentence() {
 
@@ -718,11 +525,15 @@ document.addEventListener("DOMContentLoaded", () => {
       "";
 
 
-    sentenceEditor.contentEditable =
-      "true";
+    /*
+     * Clear ONLY the input.
+     */
 
+    sentenceInput.value =
+      "";
 
-    sentenceEditor.innerHTML = "";
+    sentenceInput.disabled =
+      false;
 
 
     lastSpokenWordCount =
@@ -742,36 +553,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     updateProgress();
 
-
-    /*
-     * Put the full sentence on screen.
-     */
-
-    const ghost =
-      document.createElement("span");
-
-    ghost.className =
-      "ghost-remaining";
-
-    ghost.textContent =
-      sentence.text;
-
-    sentenceEditor.appendChild(
-      ghost
-    );
+    updateGhost();
 
 
     setTimeout(() => {
 
-      sentenceEditor.focus();
+      sentenceInput.focus();
 
     }, 100);
   }
 
 
-  /* ==========================================
+  /* =========================================
      START
-     ========================================== */
+     ========================================= */
 
   loadSentence();
 
