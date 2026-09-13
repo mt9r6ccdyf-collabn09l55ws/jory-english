@@ -72,7 +72,8 @@ document.addEventListener("DOMContentLoaded", () => {
     storyDescription.textContent =
       "Sorry, this story could not be found.";
 
-    sentenceInput.disabled = true;
+    sentenceInput.disabled =
+      true;
 
     return;
   }
@@ -121,7 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     NORMALIZE TEXT
+     NORMALIZE
      ========================================= */
 
   function normalize(text) {
@@ -135,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     SPEAK
+     SPEECH
      ========================================= */
 
   function speak(text) {
@@ -158,13 +159,6 @@ document.addEventListener("DOMContentLoaded", () => {
     utterance.pitch =
       1;
 
-    /*
-     * Do NOT cancel previous speech.
-     *
-     * This allows completed words
-     * to be spoken in sequence.
-     */
-
     window.speechSynthesis.speak(
       utterance
     );
@@ -172,7 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     UPDATE PROGRESS
+     PROGRESS
      ========================================= */
 
   function updateProgress() {
@@ -189,10 +183,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     ALIGN INPUT EXACTLY WITH GHOST
+     PERFECT INPUT ALIGNMENT
      ========================================= */
 
-  function alignInputWithGhost() {
+  function alignInput() {
 
     requestAnimationFrame(() => {
 
@@ -212,8 +206,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
       /*
-       * Position input at EXACTLY
-       * the same position as ghost text.
+       * Get the exact visual position
+       * of the transparent sentence.
        */
 
       const left =
@@ -224,6 +218,21 @@ document.addEventListener("DOMContentLoaded", () => {
         ghostRect.top -
         areaRect.top;
 
+
+      /*
+       * Get the EXACT font used
+       * by the transparent sentence.
+       */
+
+      const ghostStyle =
+        window.getComputedStyle(
+          ghostSentence
+        );
+
+
+      /* =====================================
+         POSITION
+         ===================================== */
 
       sentenceInput.style.setProperty(
         "position",
@@ -255,22 +264,26 @@ document.addEventListener("DOMContentLoaded", () => {
         "important"
       );
 
-
-      /*
-       * IMPORTANT:
-       * The input starts from the SAME
-       * left edge as the transparent text.
-       */
-
       sentenceInput.style.setProperty(
         "transform",
         "none",
         "important"
       );
 
+
+      /* =====================================
+         EXACT TEXT ALIGNMENT
+         ===================================== */
+
       sentenceInput.style.setProperty(
         "text-align",
         "left",
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "text-indent",
+        "0",
         "important"
       );
 
@@ -285,6 +298,76 @@ document.addEventListener("DOMContentLoaded", () => {
         "0",
         "important"
       );
+
+
+      /* =====================================
+         EXACT FONT
+         ===================================== */
+
+      sentenceInput.style.setProperty(
+        "font-family",
+        ghostStyle.fontFamily,
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "font-size",
+        ghostStyle.fontSize,
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "font-weight",
+        ghostStyle.fontWeight,
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "font-style",
+        ghostStyle.fontStyle,
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "line-height",
+        ghostStyle.lineHeight,
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "letter-spacing",
+        ghostStyle.letterSpacing,
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "word-spacing",
+        ghostStyle.wordSpacing,
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "font-variant",
+        ghostStyle.fontVariant,
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "font-feature-settings",
+        ghostStyle.fontFeatureSettings,
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "font-kerning",
+        "none",
+        "important"
+      );
+
+
+      /* =====================================
+         REMOVE BROWSER INPUT STYLING
+         ===================================== */
 
       sentenceInput.style.setProperty(
         "border",
@@ -311,40 +394,31 @@ document.addEventListener("DOMContentLoaded", () => {
       );
 
       sentenceInput.style.setProperty(
+        "appearance",
+        "none",
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "-webkit-appearance",
+        "none",
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "border-radius",
+        "0",
+        "important"
+      );
+
+
+      /* =====================================
+         TEXT COLOR
+         ===================================== */
+
+      sentenceInput.style.setProperty(
         "color",
         "#493c46",
-        "important"
-      );
-
-      sentenceInput.style.setProperty(
-        "font-size",
-        getComputedStyle(
-          ghostSentence
-        ).fontSize,
-        "important"
-      );
-
-      sentenceInput.style.setProperty(
-        "font-family",
-        getComputedStyle(
-          ghostSentence
-        ).fontFamily,
-        "important"
-      );
-
-      sentenceInput.style.setProperty(
-        "font-weight",
-        getComputedStyle(
-          ghostSentence
-        ).fontWeight,
-        "important"
-      );
-
-      sentenceInput.style.setProperty(
-        "line-height",
-        getComputedStyle(
-          ghostSentence
-        ).lineHeight,
         "important"
       );
 
@@ -354,31 +428,45 @@ document.addEventListener("DOMContentLoaded", () => {
         "important"
       );
 
+
+      /* =====================================
+         BOX MODEL
+         ===================================== */
+
+      sentenceInput.style.setProperty(
+        "box-sizing",
+        "border-box",
+        "important"
+      );
+
+      sentenceInput.style.setProperty(
+        "overflow",
+        "hidden",
+        "important"
+      );
+
     });
   }
 
 
   /* =========================================
-     UPDATE GHOST SENTENCE
+     UPDATE GHOST
      ========================================= */
 
-  function updateGhostSentence() {
+  function updateGhost() {
 
     const sentence =
       story.sentences[
         currentSentenceIndex
       ].text;
 
-    const typed =
-      sentenceInput.value;
-
 
     /*
+     * IMPORTANT:
+     *
      * The transparent sentence NEVER changes.
      *
-     * It always stays:
-     *
-     * My name is Lamar.
+     * It always stays the complete sentence.
      */
 
     ghostSentence.textContent =
@@ -386,23 +474,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /*
-     * Keep the typed text above it.
+     * Recalculate alignment.
      */
 
-    sentenceInput.style.color =
-      "#493c46";
-
-
-    /*
-     * Re-align after every change.
-     */
-
-    alignInputWithGhost();
+    alignInput();
   }
 
 
   /* =========================================
-     GET COMPLETED WORDS
+     COMPLETED WORDS
      ========================================= */
 
   function getCompletedWords() {
@@ -418,7 +498,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /*
      * A word becomes complete
-     * after the user presses SPACE.
+     * after pressing SPACE.
      */
 
     if (!typed.endsWith(" ")) {
@@ -438,7 +518,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     PRONOUNCE COMPLETED WORDS
+     WORD PRONUNCIATION
      ========================================= */
 
   function pronounceCompletedWords() {
@@ -481,7 +561,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ) {
 
         /*
-         * 🔊 WORD PRONUNCIATION
+         * 🔊 Speak word
          */
 
         speak(expectedWord);
@@ -515,9 +595,9 @@ document.addEventListener("DOMContentLoaded", () => {
       normalize(sentence);
 
 
-    /*
-     * COMPLETE AND CORRECT
-     */
+    /* =======================================
+       CORRECT
+       ======================================= */
 
     if (typed === correct) {
 
@@ -529,7 +609,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
       /*
-       * 🔊 SPEAK COMPLETE SENTENCE
+       * 🔊 Speak complete sentence
        */
 
       speak(sentence);
@@ -551,9 +631,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    /*
-     * WRONG / INCOMPLETE
-     */
+    /* =======================================
+       WRONG
+       ======================================= */
 
     if (
       sentenceInput.value.length >=
@@ -582,7 +662,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     INPUT EVENT
+     TYPING
      ========================================= */
 
   sentenceInput.addEventListener(
@@ -590,10 +670,10 @@ document.addEventListener("DOMContentLoaded", () => {
     () => {
 
       /*
-       * Update ghost.
+       * First update the visual alignment.
        */
 
-      updateGhostSentence();
+      updateGhost();
 
 
       /*
@@ -604,7 +684,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
       /*
-       * Check whole sentence.
+       * Check complete sentence.
        */
 
       checkSentence();
@@ -633,7 +713,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     NEXT BUTTON
+     NEXT
      ========================================= */
 
   nextSentenceButton.addEventListener(
@@ -660,8 +740,10 @@ document.addEventListener("DOMContentLoaded", () => {
       sentenceNumber.textContent =
         "🎉 Story Complete!";
 
+
       currentWordMeaning.textContent =
         "أحسنتِ!";
+
 
       currentWordIPA.textContent =
         "";
@@ -691,6 +773,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       sentenceProgressText.textContent =
         `${totalSentences} / ${totalSentences}`;
+
 
       sentenceProgressFill.style.width =
         "100%";
@@ -724,18 +807,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /*
-     * CLEAR INPUT
+     * Clear input.
      */
 
     sentenceInput.value =
       "";
+
 
     sentenceInput.disabled =
       false;
 
 
     /*
-     * RESET WORD SPEECH
+     * Reset word pronunciation.
      */
 
     spokenWordCount =
@@ -743,7 +827,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /*
-     * RESET FEEDBACK
+     * Reset feedback.
      */
 
     typingFeedback.textContent =
@@ -753,12 +837,16 @@ document.addEventListener("DOMContentLoaded", () => {
       "typing-feedback";
 
 
+    /*
+     * Disable Next.
+     */
+
     nextSentenceButton.disabled =
       true;
 
 
     /*
-     * SHOW FULL TRANSPARENT SENTENCE
+     * Show complete ghost sentence.
      */
 
     ghostSentence.textContent =
@@ -766,19 +854,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /*
-     * UPDATE PROGRESS
+     * Update progress.
      */
 
     updateProgress();
 
 
     /*
-     * ALIGN INPUT ON TOP OF GHOST
+     * Align after rendering.
      */
 
     setTimeout(() => {
 
-      alignInputWithGhost();
+      alignInput();
 
       sentenceInput.focus();
 
@@ -788,7 +876,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     WINDOW RESIZE
+     RESIZE
      ========================================= */
 
   window.addEventListener(
@@ -796,9 +884,7 @@ document.addEventListener("DOMContentLoaded", () => {
     () => {
 
       if (!sentenceInput.disabled) {
-
-        alignInputWithGhost();
-
+        alignInput();
       }
 
     }
