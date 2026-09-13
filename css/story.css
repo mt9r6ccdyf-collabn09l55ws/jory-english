@@ -1,240 +1,278 @@
-/* ==========================================
-   JORY ENGLISH
-   STORY PAGE ONLY
-   ========================================== */
+/* =========================================
+   JORY ENGLISH 🎀
+   STORY PAGE
+   ========================================= */
 
+
+/* ---------- PAGE ---------- */
 
 .story-page {
   min-height: calc(100vh - 140px);
-  padding: 40px 0 70px;
+  padding: 30px 0 60px;
 }
 
-
 .story-container {
-  max-width: 1100px;
+  max-width: 900px;
   margin: 0 auto;
 }
 
 
-/* ==========================================
-   STORY HEADER
-   ========================================== */
+/* ---------- BACK BUTTON ---------- */
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 25px;
+  padding: 10px 16px;
+
+  border-radius: 14px;
+  text-decoration: none;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  background: #fff;
+  color: #555;
+
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.back-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.09);
+}
+
+
+/* ---------- STORY TOP ---------- */
 
 .story-top {
   text-align: center;
-  margin: 20px auto 25px;
+  margin-bottom: 30px;
 }
-
 
 .story-page-emoji {
-  font-size: 48px;
-  margin-bottom: 8px;
+  font-size: 58px;
+  line-height: 1;
+  margin-bottom: 15px;
 }
-
 
 .story-level {
   display: inline-block;
 
   padding: 6px 14px;
+  margin-bottom: 12px;
 
   border-radius: 999px;
 
-  background: #f8dce8;
+  background: #fce4ec;
+  color: #b85c7a;
 
-  color: #765468;
-
-  font-size: 14px;
-
+  font-size: 13px;
   font-weight: 700;
 }
 
-
 .story-top h1 {
-  margin: 12px 0 6px;
-
-  font-size: clamp(28px, 5vw, 42px);
-
-  color: #4c4149;
-}
-
-
-.story-top p {
   margin: 0;
 
-  color: #8d8189;
+  font-size: clamp(28px, 5vw, 42px);
+  line-height: 1.2;
+
+  color: #333;
+}
+
+.story-top p {
+  margin: 12px auto 0;
+
+  max-width: 600px;
 
   font-size: 16px;
+  line-height: 1.7;
+
+  color: #777;
 }
 
 
-/* ==========================================
-   PROGRESS
-   ========================================== */
+/* ---------- PROGRESS ---------- */
 
 .story-progress {
-  max-width: 850px;
+  margin-bottom: 25px;
+  padding: 18px 20px;
 
-  margin: 0 auto 35px;
+  border-radius: 20px;
+
+  background: #fff;
+
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
 }
-
 
 .story-progress-info {
   display: flex;
-
   justify-content: space-between;
-
   align-items: center;
 
-  margin-bottom: 9px;
+  margin-bottom: 10px;
 
   font-size: 14px;
+  font-weight: 600;
 
-  font-weight: 700;
-
-  color: #776b74;
+  color: #666;
 }
-
 
 .progress-track {
   width: 100%;
+  height: 10px;
 
-  height: 9px;
-
-  background: #eee5ea;
+  overflow: hidden;
 
   border-radius: 999px;
 
-  overflow: hidden;
+  background: #f1f1f1;
 }
 
-
 .progress-fill {
-  width: 0%;
-
+  width: 20%;
   height: 100%;
-
-  background: #e8a9c2;
 
   border-radius: inherit;
 
-  transition: width 0.3s ease;
+  background: #f3a6bd;
+
+  transition: width 0.35s ease;
 }
 
 
-/* ==========================================
-   LEARNING CARD
-   ========================================== */
+/* =========================================
+   SENTENCE LEARNING CARD
+   ========================================= */
 
 .sentence-learning-card {
   position: relative;
 
-  max-width: 1000px;
+  padding: 35px 30px 40px;
 
-  min-height: 500px;
+  border-radius: 28px;
 
-  margin: 0 auto;
+  background: #fff;
 
-  padding: 45px 35px 50px;
-
-  border-radius: 30px;
-
-  background: rgba(255, 255, 255, 0.88);
-
-  box-shadow:
-    0 18px 50px rgba(80, 60, 75, 0.10);
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.07);
 
   text-align: center;
 }
 
 
+/* ---------- SENTENCE NUMBER ---------- */
+
 .sentence-number {
-  font-size: 17px;
-
-  font-weight: 700;
-
-  color: #7d6f78;
-
-  margin-bottom: 18px;
-}
-
-
-.current-word-meaning {
   display: inline-block;
 
-  padding: 10px 20px;
+  margin-bottom: 18px;
+  padding: 7px 14px;
 
-  margin-bottom: 30px;
+  border-radius: 999px;
 
-  border-radius: 16px;
+  background: #eef7ff;
+  color: #6090b5;
 
-  background: #fae8ef;
-
-  color: #654e5b;
-
-  font-size: 20px;
-
+  font-size: 13px;
   font-weight: 700;
 }
 
 
-.current-word-ipa {
-  min-height: 5px;
+/* ---------- ARABIC MEANING ---------- */
+
+.current-word-meaning {
+  min-height: 30px;
+
+  margin-bottom: 8px;
+
+  font-size: 20px;
+  line-height: 1.7;
+
+  color: #444;
+
+  direction: rtl;
 }
 
 
-/* ==========================================
+/* ---------- IPA ---------- */
+
+.current-word-ipa {
+  min-height: 24px;
+
+  margin-bottom: 22px;
+
+  font-size: 14px;
+
+  color: #999;
+}
+
+
+/* =========================================
    WRITING AREA
-   ========================================== */
+   ========================================= */
 
 .sentence-writing-area {
   position: relative;
 
   width: 100%;
 
-  height: 180px;
+  min-height: 100px;
 
-  margin: 15px auto 20px;
+  margin: 0 auto 18px;
 
-  display: flex;
+  overflow: hidden;
 
-  align-items: center;
+  border-radius: 18px;
 
-  justify-content: center;
+  background: #fafafa;
 
-  overflow: visible;
+  border: 2px solid #eeeeee;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
 }
 
 
-/* ==========================================
-   GHOST SENTENCE
-   ========================================== */
+/* ---------- GHOST SENTENCE ---------- */
 
 .ghost-sentence {
-
   position: absolute;
 
-  left: 50%;
   top: 50%;
+  left: 24px;
 
-  transform: translate(-50%, -50%);
+  transform: translateY(-50%);
 
-  width: max-content;
-
-  max-width: 95%;
+  width: calc(100% - 48px);
 
   white-space: nowrap;
 
-  font-family: Arial, sans-serif;
+  overflow: hidden;
 
-  font-size: clamp(30px, 5vw, 58px);
+  text-align: left;
 
-  font-weight: 700;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Arial,
+    sans-serif;
 
-  line-height: 1.2;
+  font-size: clamp(22px, 4vw, 34px);
 
-  color: #aaa4aa;
+  font-weight: 600;
 
-  opacity: 0.28;
+  line-height: 1.3;
+
+  letter-spacing: 0;
+
+  color: rgba(100, 100, 100, 0.18);
 
   pointer-events: none;
 
@@ -244,287 +282,330 @@
 }
 
 
-/* ==========================================
-   TYPED SENTENCE
-   ========================================== */
+/* ---------- REAL INPUT ---------- */
 
-.typed-sentence {
-
+.sentence-input {
   position: absolute;
 
-  left: 50%;
-  top: 50%;
+  inset: 0;
 
-  transform: translate(-50%, -50%);
+  z-index: 10;
 
-  width: max-content;
+  width: 100%;
+  height: 100%;
 
-  max-width: 95%;
+  padding: 0 24px;
 
-  white-space: nowrap;
+  margin: 0;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+  font-size: clamp(22px, 4vw, 34px);
+
+  font-weight: 600;
+
+  line-height: 1.3;
+
+  letter-spacing: 0;
 
   text-align: left;
 
-  font-family: Arial, sans-serif;
+  color: transparent;
 
-  font-size: clamp(30px, 5vw, 58px);
+  caret-color: #555;
 
-  font-weight: 700;
+  cursor: text;
 
-  line-height: 1.2;
-
-  color: #493c46;
-
-  pointer-events: none;
-
-  user-select: none;
-
-  z-index: 3;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 
-/* ==========================================
-   INVISIBLE INPUT
-   ========================================== */
+/* IMPORTANT:
+   The input must ALWAYS be clickable.
+*/
 
-.sentence-input {
-
-  position: absolute;
-
-  left: 50%;
-  top: 50%;
-
-  transform: translate(-50%, -50%);
-
-  width: 90%;
-
-  height: 90px;
-
-  background: transparent !important;
-
-  border: none !important;
-
-  outline: none !important;
-
-  box-shadow: none !important;
-
-  text-align: center;
-
-  font-family: Arial, sans-serif;
-
-  font-size: clamp(30px, 5vw, 58px);
-
-  font-weight: 700;
-
-  color: transparent !important;
-
-  -webkit-text-fill-color: transparent !important;
-
-  caret-color: #e58bb0;
-
-  padding: 0 !important;
-
-  margin: 0 !important;
-
-  z-index: 5;
-
+.sentence-input:disabled {
+  cursor: default;
 }
 
 
-/* ==========================================
-   FEEDBACK
-   ========================================== */
+/* ---------- FOCUS ---------- */
+
+.sentence-writing-area:focus-within {
+  border-color: #f3a6bd;
+  background: #fffafd;
+}
+
+
+/* ---------- FEEDBACK ---------- */
 
 .typing-feedback {
+  min-height: 28px;
 
-  min-height: 30px;
+  margin: 8px 0 20px;
 
-  margin: 5px auto 15px;
+  font-size: 14px;
+  font-weight: 600;
 
-  font-size: 16px;
+  color: #888;
+}
 
-  font-weight: 700;
+.typing-feedback.correct {
+  color: #63a77a;
+}
+
+.typing-feedback.incorrect {
+  color: #d47b7b;
 }
 
 
-.typing-feedback.success {
-  color: #65a47b;
-}
+/* ---------- AUDIO BUTTON ---------- */
 
+.audio-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
-.typing-feedback.error {
-  color: #d8788d;
-}
+  min-height: 48px;
 
+  padding: 12px 20px;
 
-/* ==========================================
-   BUTTONS
-   ========================================== */
-
-.audio-button,
-.next-button {
-
-  display: block;
-
-  margin: 10px auto;
+  margin: 5px;
 
   border: none;
+  border-radius: 15px;
 
-  border-radius: 999px;
-
-  padding: 15px 28px;
+  background: #fff3b8;
+  color: #6e6030;
 
   font-family: inherit;
-
-  font-size: 16px;
-
+  font-size: 14px;
   font-weight: 700;
 
   cursor: pointer;
 
   transition:
     transform 0.2s ease,
-    opacity 0.2s ease;
+    box-shadow 0.2s ease;
+}
+
+.audio-button:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 6px 15px rgba(0, 0, 0, 0.08);
+}
+
+.audio-button:active {
+  transform: translateY(0);
 }
 
 
-.audio-button {
-  background: #d9edf0;
-
-  color: #41606a;
-}
-
+/* ---------- NEXT BUTTON ---------- */
 
 .next-button {
-  background: #e8b4c8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
-  color: white;
+  min-height: 48px;
+
+  padding: 12px 24px;
+
+  margin: 5px;
+
+  border: none;
+  border-radius: 15px;
+
+  background: #f3a6bd;
+  color: #fff;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-
-.audio-button:hover,
 .next-button:not(:disabled):hover {
   transform: translateY(-2px);
+
+  box-shadow:
+    0 7px 18px rgba(243, 166, 189, 0.35);
 }
 
-
 .next-button:disabled {
-  opacity: 0.45;
-
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
 
-/* ==========================================
+/* =========================================
    DARK MODE
-   ========================================== */
+   ========================================= */
 
-body.dark .sentence-learning-card {
-  background: rgba(35, 31, 36, 0.92);
+body.dark .back-button {
+  background: #242424;
+  color: #ddd;
 }
-
 
 body.dark .story-top h1 {
-  color: #fff4fa;
+  color: #f5f5f5;
 }
 
-
-body.dark .story-top p,
-body.dark .story-progress-info,
-body.dark .sentence-number {
-  color: #c9bec6;
+body.dark .story-top p {
+  color: #aaa;
 }
 
+body.dark .story-progress {
+  background: #242424;
+}
+
+body.dark .story-progress-info {
+  color: #ccc;
+}
+
+body.dark .progress-track {
+  background: #3a3a3a;
+}
+
+body.dark .sentence-learning-card {
+  background: #242424;
+}
 
 body.dark .current-word-meaning {
-  background: #493b45;
-
-  color: #f5dce8;
+  color: #eee;
 }
 
+body.dark .current-word-ipa {
+  color: #999;
+}
+
+body.dark .sentence-writing-area {
+  background: #1f1f1f;
+  border-color: #3b3b3b;
+}
+
+body.dark .sentence-writing-area:focus-within {
+  background: #252025;
+  border-color: #d98da8;
+}
 
 body.dark .ghost-sentence {
-  color: #d9ced6;
-
-  opacity: 0.22;
+  color: rgba(255, 255, 255, 0.18);
 }
-
-
-body.dark .typed-sentence {
-  color: #fff3f8;
-}
-
 
 body.dark .sentence-input {
-  caret-color: #f2a8c4;
+  caret-color: #fff;
+}
+
+body.dark .typing-feedback {
+  color: #aaa;
 }
 
 
-/* ==========================================
-   TABLET
-   ========================================== */
+/* =========================================
+   MOBILE
+   ========================================= */
 
-@media (max-width: 768px) {
+@media (max-width: 600px) {
 
   .story-page {
-    padding: 25px 0 50px;
+    padding: 20px 0 45px;
   }
 
+  .story-container {
+    width: 100%;
+  }
+
+  .back-button {
+    margin-bottom: 20px;
+    font-size: 14px;
+  }
+
+  .story-page-emoji {
+    font-size: 48px;
+  }
+
+  .story-top h1 {
+    font-size: 28px;
+  }
+
+  .story-top p {
+    font-size: 14px;
+  }
+
+  .story-progress {
+    padding: 15px;
+    border-radius: 18px;
+  }
 
   .sentence-learning-card {
-    min-height: 450px;
-
-    padding:
-      35px
-      20px
-      40px;
-
-    border-radius: 24px;
+    padding: 28px 15px 32px;
+    border-radius: 22px;
   }
 
+  .current-word-meaning {
+    font-size: 18px;
+  }
 
   .sentence-writing-area {
-    height: 150px;
+    min-height: 90px;
   }
 
+  .ghost-sentence {
+    left: 18px;
+    width: calc(100% - 36px);
 
-  .ghost-sentence,
-  .typed-sentence,
+    font-size: 21px;
+  }
+
   .sentence-input {
-    font-size: clamp(24px, 7vw, 42px);
+    padding: 0 18px;
+
+    font-size: 21px;
   }
 
+  .audio-button,
+  .next-button {
+    width: calc(100% - 10px);
+
+    margin: 5px;
+  }
 }
 
 
-/* ==========================================
-   PHONE
-   ========================================== */
+/* =========================================
+   VERY SMALL PHONES
+   ========================================= */
 
-@media (max-width: 480px) {
+@media (max-width: 380px) {
 
-  .sentence-learning-card {
-    padding:
-      30px
-      14px
-      35px;
+  .ghost-sentence {
+    font-size: 18px;
   }
 
+  .sentence-input {
+    font-size: 18px;
+  }
 
   .current-word-meaning {
     font-size: 17px;
   }
-
-
-  .sentence-writing-area {
-    height: 125px;
-  }
-
-
-  .ghost-sentence,
-  .typed-sentence,
-  .sentence-input {
-    font-size: 22px;
-  }
-
 }
