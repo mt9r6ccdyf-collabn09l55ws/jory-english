@@ -16,7 +16,6 @@
     href="../css/style.css"
   >
 
-  <!-- Story-only CSS -->
   <link
     rel="stylesheet"
     href="../css/story.css"
@@ -26,6 +25,7 @@
 
 <body>
 
+  <!-- HEADER -->
   <header class="site-header">
 
     <div class="container header-content">
@@ -37,7 +37,6 @@
         Jory English 🎀
       </a>
 
-
       <div class="global-controls">
 
         <button
@@ -47,7 +46,6 @@
         >
           🇸🇦 العربية
         </button>
-
 
         <button
           id="themeToggle"
@@ -64,7 +62,7 @@
   </header>
 
 
-
+  <!-- STORY -->
   <main class="story-page">
 
     <div class="container story-container">
@@ -78,7 +76,7 @@
       </a>
 
 
-
+      <!-- STORY HEADER -->
       <section class="story-top">
 
         <div
@@ -88,7 +86,6 @@
           🌅
         </div>
 
-
         <span
           id="storyLevel"
           class="story-level"
@@ -96,11 +93,9 @@
           A1
         </span>
 
-
         <h1 id="storyTitle">
           My Morning Routine
         </h1>
-
 
         <p id="storyDescription">
           A simple story about a morning routine.
@@ -109,7 +104,7 @@
       </section>
 
 
-
+      <!-- PROGRESS -->
       <section class="story-progress">
 
         <div class="story-progress-info">
@@ -124,7 +119,6 @@
 
         </div>
 
-
         <div class="progress-track">
 
           <div
@@ -137,7 +131,7 @@
       </section>
 
 
-
+      <!-- LEARNING CARD -->
       <section class="sentence-learning-card">
 
         <div
@@ -148,7 +142,7 @@
         </div>
 
 
-
+        <!-- ARABIC MEANING -->
         <div
           id="currentWordMeaning"
           class="current-word-meaning"
@@ -157,23 +151,20 @@
         </div>
 
 
+        <!-- IPA -->
         <div
           id="currentWordIPA"
           class="current-word-ipa"
         ></div>
 
 
-
         <!-- =================================
-             WRITING AREA
+             SENTENCE WRITING
              ================================= -->
 
         <div class="sentence-writing-area">
 
-          <!--
-            This is the permanent ghost sentence.
-          -->
-
+          <!-- Transparent guide -->
           <div
             id="ghostSentence"
             class="ghost-sentence"
@@ -182,28 +173,13 @@
           </div>
 
 
-          <!--
-            This is the text the learner has typed.
-            It uses the SAME visual position
-            as the ghost sentence.
-          -->
-
-          <div
-            id="typedSentence"
-            class="typed-sentence"
-          ></div>
-
-
-          <!--
-            Invisible keyboard input.
-            It ONLY receives typing.
-          -->
-
+          <!-- User typing -->
           <input
             id="sentenceInput"
             class="sentence-input"
             type="text"
             autocomplete="off"
+            autocorrect="off"
             autocapitalize="off"
             spellcheck="false"
             aria-label="Type the sentence"
@@ -212,7 +188,7 @@
         </div>
 
 
-
+        <!-- FEEDBACK -->
         <div
           id="typingFeedback"
           class="typing-feedback"
@@ -220,7 +196,7 @@
         ></div>
 
 
-
+        <!-- AUDIO -->
         <button
           id="sentenceAudioButton"
           class="audio-button"
@@ -230,7 +206,7 @@
         </button>
 
 
-
+        <!-- NEXT -->
         <button
           id="nextSentenceButton"
           class="next-button"
@@ -247,7 +223,7 @@
   </main>
 
 
-
+  <!-- FOOTER -->
   <footer class="site-footer">
 
     <div class="container">
@@ -261,11 +237,9 @@
   </footer>
 
 
-
+  <!-- JAVASCRIPT -->
   <script src="../js/data.js"></script>
-
   <script src="../js/app.js"></script>
-
   <script src="../js/story.js"></script>
 
 </body>
