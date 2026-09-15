@@ -3,11 +3,6 @@
    STORY PAGE
    ========================================= */
 
-
-/* =========================================
-   PAGE
-   ========================================= */
-
 .story-page {
   min-height: calc(100vh - 140px);
   padding: 30px 0 60px;
@@ -20,7 +15,7 @@
 
 
 /* =========================================
-   BACK
+   BACK BUTTON
    ========================================= */
 
 .back-button {
@@ -232,31 +227,17 @@
 
 /* =========================================
    WRITING AREA
-   =========================================
-
-   IMPORTANT:
-
-   There is NO input box.
-
-   The user clicks directly on the
-   sentence and types there.
    ========================================= */
 
 .sentence-writing-area {
   position: relative;
 
   width: 100%;
-  min-height: 110px;
+  height: 110px;
 
   margin: 0 auto 18px;
 
-  display: flex;
-  align-items: center;
-
   overflow: hidden;
-
-  border: none;
-  outline: none;
 
   background: transparent;
 
@@ -267,19 +248,74 @@
 
 
 /* =========================================
-   ACTUAL EDITABLE TEXT
+   GHOST SENTENCE
+   ========================================= */
+
+.ghost-sentence {
+  position: absolute;
+
+  top: 50%;
+  left: 24px;
+
+  z-index: 1;
+
+  width: calc(100% - 48px);
+
+  margin: 0;
+
+  transform: translateY(-50%);
+
+  color: rgba(80, 80, 80, 0.18);
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+  font-size: clamp(22px, 4vw, 34px);
+
+  font-weight: 600;
+
+  line-height: 1.3;
+
+  letter-spacing: 0;
+
+  text-align: left;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  pointer-events: none;
+
+  user-select: none;
+}
+
+
+/* =========================================
+   REAL EDITABLE SENTENCE
    ========================================= */
 
 .sentence-editor {
-  position: relative;
+  position: absolute;
+
+  top: 50%;
+  left: 0;
 
   z-index: 5;
 
   width: 100%;
+  height: auto;
 
-  min-height: 70px;
+  min-height: 0;
+
+  margin: 0;
 
   padding: 0 24px;
+
+  transform: translateY(-50%);
 
   outline: none;
   border: none;
@@ -314,100 +350,26 @@
 
   cursor: text;
 
-  -webkit-user-select: text;
   user-select: text;
 
+  -webkit-user-select: text;
   -webkit-tap-highlight-color: transparent;
 }
 
 
-/*
-   Remove browser's default
-   contenteditable outline.
-*/
+/* Remove browser formatting */
 
 .sentence-editor:focus {
   outline: none;
 }
 
-
-/*
-   Do not allow the browser to
-   create weird empty paragraph spacing.
-*/
-
-.sentence-editor p {
+.sentence-editor p,
+.sentence-editor div {
   display: inline;
 
   margin: 0;
   padding: 0;
 }
-
-
-/* =========================================
-   GHOST SENTENCE
-   ========================================= */
-
-.ghost-sentence {
-  position: absolute;
-
-  top: 50%;
-  left: 24px;
-
-  z-index: 1;
-
-  width: calc(100% - 48px);
-
-  transform: translateY(-50%);
-
-  color: rgba(80, 80, 80, 0.18);
-
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Arial,
-    sans-serif;
-
-  font-size: clamp(22px, 4vw, 34px);
-
-  font-weight: 600;
-
-  line-height: 1.3;
-
-  letter-spacing: 0;
-
-  text-align: left;
-
-  white-space: nowrap;
-
-  overflow: hidden;
-
-  pointer-events: none;
-
-  user-select: none;
-}
-
-
-/* =========================================
-   WHEN TYPING
-   ========================================= */
-
-.sentence-writing-area:focus-within
-.sentence-editor {
-  color: #444444;
-}
-
-
-/*
-   The ghost stays visible behind
-   the typed text.
-
-   So the learner sees:
-
-   My name is Lamar.
-   ↑ typed directly over it
-*/
 
 
 /* =========================================
@@ -435,7 +397,7 @@
 
 
 /* =========================================
-   AUDIO
+   AUDIO BUTTON
    ========================================= */
 
 .audio-button {
@@ -480,7 +442,7 @@
 
 
 /* =========================================
-   NEXT
+   NEXT BUTTON
    ========================================= */
 
 .next-button {
@@ -617,12 +579,10 @@ body.dark .ghost-sentence {
   }
 
   .sentence-writing-area {
-    min-height: 90px;
+    height: 90px;
   }
 
   .sentence-editor {
-    min-height: 60px;
-
     padding: 0 18px;
 
     font-size: 21px;
