@@ -17,21 +17,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let story = null;
 
+
   if (typeof STORIES !== "undefined") {
 
-    if (storyId && typeof getStoryById === "function") {
+    if (
+      storyId &&
+      typeof getStoryById === "function"
+    ) {
       story = getStoryById(storyId);
     }
 
-    if (!story && typeof getStoriesByLevel === "function") {
+    if (
+      !story &&
+      typeof getStoriesByLevel === "function"
+    ) {
 
       const a1Stories =
         getStoriesByLevel("A1");
 
-      if (a1Stories && a1Stories.length > 0) {
+      if (
+        a1Stories &&
+        a1Stories.length > 0
+      ) {
         story = a1Stories[0];
       }
+
     }
+
   }
 
 
@@ -95,7 +107,8 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!story) {
 
     if (storyTitle) {
-      storyTitle.textContent = "Story not found";
+      storyTitle.textContent =
+        "Story not found";
     }
 
     if (storyDescription) {
@@ -127,8 +140,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let lastCompletedSegment = "";
 
-  let previousText = "";
-
 
   /* =========================================
      LANGUAGE
@@ -145,13 +156,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     NORMALIZE
+     NORMAL TEXT
      ========================================= */
 
   function normalizeText(text) {
 
     return String(text || "")
       .replace(/\u00A0/g, " ")
+      .replace(/[\r\n\t]+/g, " ")
       .replace(/\s+/g, " ")
       .trim();
 
@@ -159,14 +171,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     REMOVE PUNCTUATION
+     TEXT FOR ANSWER CHECKING
+     
+     This is more forgiving than the
+     old version.
+
+     It ignores:
+     - upper/lower case
+     - extra spaces
+     - punctuation differences
      ========================================= */
 
-  function cleanWord(text) {
+  function normalizeForAnswer(text) {
 
-    return String(text || "")
-      .replace(/^[.,!?;:'"“”‘’()[\]{}]+/g, "")
-      .replace(/[.,!?;:'"“”‘’()[\]{}]+$/g, "")
+    return normalizeText(text)
+      .toLowerCase()
+      .replace(/[.,!?;:'"“”‘’()[\]{}]/g, "")
+      .replace(/\s+/g, " ")
       .trim();
 
   }
@@ -182,11 +203,15 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    if (!("speechSynthesis" in window)) {
+    if (
+      !("speechSynthesis" in window)
+    ) {
       return;
     }
 
+
     window.speechSynthesis.cancel();
+
 
     const voice =
       new SpeechSynthesisUtterance(text);
@@ -197,19 +222,44 @@ document.addEventListener("DOMContentLoaded", () => {
 
     voice.pitch = 1;
 
+
     window.speechSynthesis.speak(voice);
 
   }
 
 
   /* =========================================
-     FIND WORD / PHRASE TRANSLATION
+     CLEAN WORD
      ========================================= */
 
-  function getWordTranslation(typedText) {
+  function cleanWord(text) {
+
+    return String(text || "")
+      .replace(
+        /^[.,!?;:'"“”‘’()[\]{}]+/g,
+        ""
+      )
+      .replace(
+        /[.,!?;:'"“”‘’()[\]{}]+$/g,
+        ""
+      )
+      .trim();
+
+  }
+
+
+  /* =========================================
+     GET WORD TRANSLATION
+     ========================================= */
+
+  function getWordTranslation(
+    typedText
+  ) {
 
     const cleanTyped =
-      normalizeText(typedText).toLowerCase();
+      normalizeText(typedText)
+        .toLowerCase();
+
 
     if (!cleanTyped) {
       return "";
@@ -219,28 +269,39 @@ document.addEventListener("DOMContentLoaded", () => {
     const sentence =
       sentences[currentSentenceIndex];
 
+
     if (!sentence) {
       return "";
     }
 
 
     /* -----------------------------------------
-       FIRST: USE WORD DATA FROM STORY
+       STORY WORD DATA
        ----------------------------------------- */
 
-    if (Array.isArray(sentence.words)) {
+    if (
+      Array.isArray(sentence.words)
+    ) {
 
-      for (const item of sentence.words) {
+      for (
+        const item of sentence.words
+      ) {
 
         let word = "";
+
         let translation = "";
 
 
-        if (typeof item === "string") {
+        if (
+          typeof item === "string"
+        ) {
 
           word = item;
 
-        } else if (item && typeof item === "object") {
+        } else if (
+          item &&
+          typeof item === "object"
+        ) {
 
           word =
             item.word ||
@@ -257,6 +318,7 @@ document.addEventListener("DOMContentLoaded", () => {
             item.ar ||
             item.translationAr ||
             "";
+
         }
 
 
@@ -266,11 +328,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         const cleanWordData =
-          normalizeText(word).toLowerCase();
+          normalizeText(word)
+            .toLowerCase();
 
 
         if (
-          cleanWordData === cleanTyped &&
+          cleanWordData ===
+            cleanTyped &&
           translation
         ) {
 
@@ -283,40 +347,78 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    /* -----------------------------------------
-       COMMON PHRASES
-       -----------------------------------------
-
-       These are only fallback translations
-       for phrases such as "wake up".
-       ----------------------------------------- */
+    /* =========================================
+       FALLBACK PHRASES
+       ========================================= */
 
     const fallbackTranslations = {
 
-      "wake up": "يستيقظ",
-      "get up": "ينهض",
-      "go to": "يذهب إلى",
-      "go home": "يذهب إلى المنزل",
-      "go back": "يعود",
-      "come back": "يعود",
-      "sit down": "يجلس",
-      "stand up": "يقف",
-      "get ready": "يستعد",
-      "brush my teeth": "أنظف أسناني",
-      "wash my face": "أغسل وجهي",
-      "have breakfast": "أتناول الإفطار",
-      "eat breakfast": "أتناول الإفطار",
-      "go to school": "يذهب إلى المدرسة",
-      "go to bed": "يذهب إلى النوم",
-      "look at": "ينظر إلى",
-      "listen to": "يستمع إلى",
-      "talk to": "يتحدث إلى"
+      "wake up":
+        "يستيقظ",
+
+      "get up":
+        "ينهض",
+
+      "go to":
+        "يذهب إلى",
+
+      "go home":
+        "يذهب إلى المنزل",
+
+      "go back":
+        "يعود",
+
+      "come back":
+        "يعود",
+
+      "sit down":
+        "يجلس",
+
+      "stand up":
+        "يقف",
+
+      "get ready":
+        "يستعد",
+
+      "brush my teeth":
+        "أنظف أسناني",
+
+      "wash my face":
+        "أغسل وجهي",
+
+      "have breakfast":
+        "أتناول الإفطار",
+
+      "eat breakfast":
+        "أتناول الإفطار",
+
+      "go to school":
+        "يذهب إلى المدرسة",
+
+      "go to bed":
+        "يذهب إلى النوم",
+
+      "look at":
+        "ينظر إلى",
+
+      "listen to":
+        "يستمع إلى",
+
+      "talk to":
+        "يتحدث إلى"
+
     };
 
 
-    if (fallbackTranslations[cleanTyped]) {
+    if (
+      fallbackTranslations[
+        cleanTyped
+      ]
+    ) {
 
-      return fallbackTranslations[cleanTyped];
+      return fallbackTranslations[
+        cleanTyped
+      ];
 
     }
 
@@ -327,14 +429,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     SHOW CURRENT WORD TRANSLATION
+     SHOW TEMPORARY WORD TRANSLATION
      ========================================= */
 
-  function showCurrentWordTranslation(text) {
+  function showCurrentWordTranslation(
+    text
+  ) {
 
     if (!currentWordIPA) {
       return;
     }
+
 
     const translation =
       getWordTranslation(text);
@@ -356,7 +461,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     GET CURRENT TYPED PART
+     GET CURRENT WORD / PHRASE
      ========================================= */
 
   function getCurrentPart() {
@@ -365,41 +470,35 @@ document.addEventListener("DOMContentLoaded", () => {
       return "";
     }
 
+
     const rawText =
       sentenceEditor.innerText || "";
 
-    /*
-       Everything after the last space
-       is normally the current word.
 
-       BUT if the story contains a phrase
-       such as "wake up", we keep the
-       phrase together.
-    */
+    const textWithoutTrailingSpace =
+      rawText
+        .replace(/\s+$/, "");
 
-    const withoutTrailingSpace =
-      rawText.replace(/\s+$/, "");
 
-    if (!withoutTrailingSpace) {
+    if (!textWithoutTrailingSpace) {
       return "";
     }
 
 
     const parts =
-      withoutTrailingSpace.split(/\s+/);
+      textWithoutTrailingSpace
+        .split(/\s+/);
 
 
     /*
-       Try the longest possible phrase
-       from the current end.
+       Check up to four words so phrases
+       such as:
 
-       Example:
-
-       wake
        wake up
+       brush my teeth
+       have breakfast
 
-       When "wake up" exists in the
-       vocabulary, we use the whole phrase.
+       can be translated.
     */
 
     const maxWords =
@@ -418,7 +517,9 @@ document.addEventListener("DOMContentLoaded", () => {
           .join(" ");
 
 
-      if (getWordTranslation(candidate)) {
+      if (
+        getWordTranslation(candidate)
+      ) {
 
         return candidate;
 
@@ -427,13 +528,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    return parts[parts.length - 1];
+    return parts[
+      parts.length - 1
+    ];
 
   }
 
 
   /* =========================================
-     SPEAK COMPLETED WORD / PHRASE
+     COMPLETE WORD / PHRASE
      ========================================= */
 
   function handleCompletedPart() {
@@ -448,22 +551,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /*
-       Only do this when the learner
-       actually pressed space.
+       Only run when a real space exists
+       at the end.
     */
 
     if (!/\s$/.test(rawText)) {
-      return;
-    }
-
-
-    const beforeSpace =
-      rawText
-        .replace(/\s+$/, "")
-        .trim();
-
-
-    if (!beforeSpace) {
       return;
     }
 
@@ -478,25 +570,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /*
-       Prevent repeating the same phrase.
+       Do not repeat the same phrase.
     */
 
     if (
       currentPart.toLowerCase() ===
       lastCompletedSegment.toLowerCase()
     ) {
-
       return;
-
     }
 
 
     const translation =
-      getWordTranslation(currentPart);
+      getWordTranslation(
+        currentPart
+      );
 
 
     /*
-       If we know this word/phrase,
+       If we know the word/phrase,
        pronounce it.
     */
 
@@ -510,16 +602,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /*
-       Clear temporary translation
-       after the word is completed.
+       Temporary word translation
+       disappears after Space.
 
-       The full sentence translation
-       ABOVE IS NOT TOUCHED.
+       IMPORTANT:
+       currentWordMeaning is NOT touched.
+
+       So the full sentence translation
+       stays exactly where it is.
     */
 
     if (currentWordIPA) {
 
-      currentWordIPA.textContent = "";
+      currentWordIPA.textContent =
+        "";
 
     }
 
@@ -560,7 +656,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       storyTitle.textContent =
         language === "ar"
-          ? (story.titleAr || story.title)
+          ? (
+              story.titleAr ||
+              story.title
+            )
           : story.title;
 
     }
@@ -570,7 +669,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       storyDescription.textContent =
         language === "ar"
-          ? (story.descriptionAr || story.description)
+          ? (
+              story.descriptionAr ||
+              story.description
+            )
           : story.description;
 
     }
@@ -581,8 +683,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const level =
         story.level || "A1";
 
+
       backToLevel.href =
         `level.html?level=${encodeURIComponent(level)}`;
+
 
       backToLevel.textContent =
         language === "ar"
@@ -603,6 +707,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const total =
       sentences.length;
 
+
     const current =
       currentSentenceIndex + 1;
 
@@ -619,8 +724,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const percentage =
         total > 0
-          ? (current / total) * 100
+          ? (
+              current / total
+            ) * 100
           : 0;
+
 
       sentenceProgressFill.style.width =
         `${percentage}%`;
@@ -631,7 +739,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     RESET SENTENCE
+     RESET
      ========================================= */
 
   function resetSentence() {
@@ -641,9 +749,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    sentenceEditor.textContent = "";
+    /*
+       Only clear when moving to a
+       NEW sentence.
 
-    sentenceEditor.contentEditable = "true";
+       Never rewrite while typing.
+    */
+
+    sentenceEditor.textContent =
+      "";
+
+
+    sentenceEditor.contentEditable =
+      "true";
+
 
     sentenceEditor.setAttribute(
       "contenteditable",
@@ -651,34 +770,34 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-    sentenceCompleted = false;
+    sentenceCompleted =
+      false;
 
-    lastCompletedSegment = "";
 
-    previousText = "";
+    lastCompletedSegment =
+      "";
 
 
     /*
-       IMPORTANT:
+       Clear only the temporary
+       word translation.
 
-       This element is used for the
-       temporary word translation.
-
-       The full Arabic sentence is
-       stored in currentWordMeaning
-       and remains untouched.
+       Full Arabic translation
+       remains untouched.
     */
 
     if (currentWordIPA) {
 
-      currentWordIPA.textContent = "";
+      currentWordIPA.textContent =
+        "";
 
     }
 
 
     if (typingFeedback) {
 
-      typingFeedback.textContent = "";
+      typingFeedback.textContent =
+        "";
 
       typingFeedback.className =
         "typing-feedback";
@@ -688,7 +807,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (nextSentenceButton) {
 
-      nextSentenceButton.disabled = true;
+      nextSentenceButton.disabled =
+        true;
 
     }
 
@@ -704,46 +824,55 @@ document.addEventListener("DOMContentLoaded", () => {
     const sentence =
       sentences[currentSentenceIndex];
 
+
     if (!sentence) {
       return;
     }
 
 
-    sentenceCompleted = false;
+    sentenceCompleted =
+      false;
 
-    lastCompletedSegment = "";
 
-    previousText = "";
+    lastCompletedSegment =
+      "";
 
 
     /* ---------- NUMBER ---------- */
 
     if (sentenceNumber) {
 
-      if (getLanguage() === "ar") {
+      if (
+        getLanguage() === "ar"
+      ) {
 
         sentenceNumber.textContent =
-          `الجملة ${currentSentenceIndex + 1}`;
+          `الجملة ${
+            currentSentenceIndex + 1
+          }`;
 
       } else {
 
         sentenceNumber.textContent =
-          `Sentence ${currentSentenceIndex + 1}`;
+          `Sentence ${
+            currentSentenceIndex + 1
+          }`;
 
       }
 
     }
 
 
-    /* ---------- FULL ARABIC TRANSLATION ---------- */
+    /* ---------- FULL TRANSLATION ---------- */
 
     if (currentWordMeaning) {
 
       /*
-         THIS IS THE IMPORTANT PART.
+         FULL SENTENCE TRANSLATION
+         STAYS HERE.
 
-         Full sentence translation stays
-         here permanently.
+         It does NOT change when
+         the learner types.
       */
 
       currentWordMeaning.textContent =
@@ -752,11 +881,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    /* ---------- IPA / TEMPORARY WORD MEANING ---------- */
+    /* ---------- TEMP WORD AREA ---------- */
 
     if (currentWordIPA) {
 
-      currentWordIPA.textContent = "";
+      currentWordIPA.textContent =
+        "";
 
     }
 
@@ -771,7 +901,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    /* ---------- RESET EDITOR ---------- */
+    /* ---------- EDITOR ---------- */
 
     resetSentence();
 
@@ -801,46 +931,68 @@ document.addEventListener("DOMContentLoaded", () => {
     const sentence =
       sentences[currentSentenceIndex];
 
-    if (!sentence || !sentenceEditor) {
+
+    if (
+      !sentence ||
+      !sentenceEditor
+    ) {
       return;
     }
 
 
     const expected =
-      normalizeText(sentence.text);
-
-    const typed =
-      normalizeText(
-        sentenceEditor.innerText || ""
+      normalizeForAnswer(
+        sentence.text
       );
 
 
+    const typed =
+      normalizeForAnswer(
+        sentenceEditor.innerText
+      );
+
+
+    /* =======================================
+       EMPTY
+       ======================================= */
+
     if (!typed) {
 
-      sentenceCompleted = false;
+      sentenceCompleted =
+        false;
+
 
       if (nextSentenceButton) {
-        nextSentenceButton.disabled = true;
+
+        nextSentenceButton.disabled =
+          true;
+
       }
+
 
       if (typingFeedback) {
 
-        typingFeedback.textContent = "";
+        typingFeedback.textContent =
+          "";
 
         typingFeedback.className =
           "typing-feedback";
 
       }
 
+
       return;
     }
 
 
-    /* ---------- COMPLETE ---------- */
+    /* =======================================
+       CORRECT
+       ======================================= */
 
     if (typed === expected) {
 
-      sentenceCompleted = true;
+      sentenceCompleted =
+        true;
 
 
       if (typingFeedback) {
@@ -850,6 +1002,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ? "ممتاز! ✓"
             : "Excellent! ✓";
 
+
         typingFeedback.className =
           "typing-feedback correct";
 
@@ -858,39 +1011,46 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (nextSentenceButton) {
 
-        nextSentenceButton.disabled = false;
+        nextSentenceButton.disabled =
+          false;
 
       }
 
 
       /*
-         Read the entire sentence.
+         Read the whole sentence.
       */
 
-      speak(expected);
+      speak(sentence.text);
 
 
       saveProgress();
+
 
       return;
     }
 
 
-    /* ---------- NOT COMPLETE ---------- */
+    /* =======================================
+       NOT COMPLETE
+       ======================================= */
 
-    sentenceCompleted = false;
+    sentenceCompleted =
+      false;
 
 
     if (nextSentenceButton) {
 
-      nextSentenceButton.disabled = true;
+      nextSentenceButton.disabled =
+        true;
 
     }
 
 
     if (typingFeedback) {
 
-      typingFeedback.textContent = "";
+      typingFeedback.textContent =
+        "";
 
       typingFeedback.className =
         "typing-feedback";
@@ -901,7 +1061,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     INPUT EVENT
+     EDITOR INPUT
      ========================================= */
 
   if (sentenceEditor) {
@@ -910,33 +1070,21 @@ document.addEventListener("DOMContentLoaded", () => {
       "input",
       () => {
 
-        const currentText =
+        const rawText =
           sentenceEditor.innerText || "";
 
 
         /*
-           Detect a SPACE.
-
-           We check the REAL editor text
-           BEFORE normalizeText().
-
-           This is what fixes the word
-           pronunciation.
+           If the learner is currently
+           typing a word, show its
+           temporary translation.
         */
 
-        const addedSpace =
-          /\s$/.test(currentText);
-
-
-        /*
-           While typing the current word/
-           phrase, show its translation.
-        */
-
-        if (!addedSpace) {
+        if (!/\s$/.test(rawText)) {
 
           const currentPart =
             getCurrentPart();
+
 
           showCurrentWordTranslation(
             currentPart
@@ -946,13 +1094,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /*
-           When SPACE is pressed:
+           If the learner has just
+           completed a word/phrase
+           with Space:
 
-           1. pronounce current word/phrase
-           2. clear its temporary translation
+           🔊 pronounce it
+           📝 remove temporary translation
         */
 
-        if (addedSpace) {
+        if (/\s$/.test(rawText)) {
 
           handleCompletedPart();
 
@@ -965,10 +1115,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         checkSentence();
 
-
-        previousText =
-          currentText;
-
       }
     );
 
@@ -980,6 +1126,11 @@ document.addEventListener("DOMContentLoaded", () => {
     sentenceEditor.addEventListener(
       "keydown",
       (event) => {
+
+        /*
+           Prevent Enter from making
+           a new paragraph.
+        */
 
         if (event.key === "Enter") {
 
@@ -996,7 +1147,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     CLICK AREA
+     WRITING AREA CLICK
      ========================================= */
 
   if (sentenceWritingArea) {
@@ -1006,7 +1157,9 @@ document.addEventListener("DOMContentLoaded", () => {
       () => {
 
         if (sentenceEditor) {
+
           sentenceEditor.focus();
+
         }
 
       }
@@ -1028,9 +1181,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const sentence =
           sentences[currentSentenceIndex];
 
+
         if (!sentence) {
           return;
         }
+
 
         speak(sentence.text);
 
@@ -1055,6 +1210,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
+        /* ---------- NEXT SENTENCE ---------- */
+
         if (
           currentSentenceIndex <
           sentences.length - 1
@@ -1078,6 +1235,7 @@ document.addEventListener("DOMContentLoaded", () => {
               ? "🎉 أحسنتِ! أكملتِ القصة!"
               : "🎉 Amazing! You completed the story!";
 
+
           typingFeedback.className =
             "typing-feedback correct";
 
@@ -1086,6 +1244,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         nextSentenceButton.disabled =
           true;
+
 
         nextSentenceButton.textContent =
           getLanguage() === "ar"
@@ -1120,9 +1279,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const key =
         "joryStoryProgress";
 
+
       const oldData =
         JSON.parse(
-          localStorage.getItem(key) || "{}"
+          localStorage.getItem(key) ||
+          "{}"
         );
 
 
@@ -1137,7 +1298,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!oldData[storyKey]) {
 
         oldData[storyKey] = {
+
           completedSentences: []
+
         };
 
       }
@@ -1147,7 +1310,9 @@ document.addEventListener("DOMContentLoaded", () => {
         sentenceCompleted &&
         !oldData[storyKey]
           .completedSentences
-          .includes(currentSentenceIndex)
+          .includes(
+            currentSentenceIndex
+          )
       ) {
 
         oldData[storyKey]
