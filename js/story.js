@@ -1,28 +1,38 @@
 /* =========================================
    JORY ENGLISH 🎀
-   STORY LEARNING SYSTEM
+   STORY PAGE
    ========================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  /* -----------------------------------------
+  /* =========================================
      GET STORY
-     ----------------------------------------- */
+     ========================================= */
 
-  const params = new URLSearchParams(window.location.search);
-  const storyId = params.get("story");
+  const params =
+    new URLSearchParams(window.location.search);
+
+  const storyId =
+    params.get("story");
 
   let story = null;
 
+
   if (typeof STORIES !== "undefined") {
 
-    if (storyId) {
+    if (storyId && typeof getStoryById === "function") {
       story = getStoryById(storyId);
     }
 
-    /* Fallback: first A1 story */
-    if (!story) {
-      const a1Stories = getStoriesByLevel("A1");
+    /*
+       If no story ID exists, use
+       the first A1 story.
+    */
+
+    if (!story && typeof getStoriesByLevel === "function") {
+
+      const a1Stories =
+        getStoriesByLevel("A1");
 
       if (a1Stories && a1Stories.length > 0) {
         story = a1Stories[0];
@@ -31,25 +41,45 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  /* -----------------------------------------
+  /* =========================================
      ELEMENTS
-     ----------------------------------------- */
+     ========================================= */
 
-  const storyEmoji = document.getElementById("storyEmoji");
-  const storyLevel = document.getElementById("storyLevel");
-  const storyTitle = document.getElementById("storyTitle");
-  const storyDescription = document.getElementById("storyDescription");
+  const storyEmoji =
+    document.getElementById("storyEmoji");
 
-  const backToLevel = document.getElementById("backToLevel");
+  const storyLevel =
+    document.getElementById("storyLevel");
 
-  const sentenceNumber = document.getElementById("sentenceNumber");
-  const currentWordMeaning = document.getElementById("currentWordMeaning");
-  const currentWordIPA = document.getElementById("currentWordIPA");
+  const storyTitle =
+    document.getElementById("storyTitle");
 
-  const ghostSentence = document.getElementById("ghostSentence");
-  const sentenceInput = document.getElementById("sentenceInput");
+  const storyDescription =
+    document.getElementById("storyDescription");
 
-  const typingFeedback = document.getElementById("typingFeedback");
+  const backToLevel =
+    document.getElementById("backToLevel");
+
+  const sentenceNumber =
+    document.getElementById("sentenceNumber");
+
+  const currentWordMeaning =
+    document.getElementById("currentWordMeaning");
+
+  const currentWordIPA =
+    document.getElementById("currentWordIPA");
+
+  const sentenceWritingArea =
+    document.getElementById("sentenceWritingArea");
+
+  const sentenceEditor =
+    document.getElementById("sentenceEditor");
+
+  const ghostSentence =
+    document.getElementById("ghostSentence");
+
+  const typingFeedback =
+    document.getElementById("typingFeedback");
 
   const sentenceAudioButton =
     document.getElementById("sentenceAudioButton");
@@ -64,14 +94,15 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("sentenceProgressFill");
 
 
-  /* -----------------------------------------
-     SAFETY CHECK
-     ----------------------------------------- */
+  /* =========================================
+     STORY CHECK
+     ========================================= */
 
   if (!story) {
 
     if (storyTitle) {
-      storyTitle.textContent = "Story not found";
+      storyTitle.textContent =
+        "Story not found";
     }
 
     if (storyDescription) {
@@ -83,52 +114,64 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  /* -----------------------------------------
-     STORY DATA
-     ----------------------------------------- */
+  /* =========================================
+     SENTENCES
+     ========================================= */
 
-  const sentences = Array.isArray(story.sentences)
-    ? story.sentences
-    : [];
+  const sentences =
+    Array.isArray(story.sentences)
+      ? story.sentences
+      : [];
+
+  if (!sentences.length) {
+    return;
+  }
+
 
   let currentSentenceIndex = 0;
 
-  let completedWords = new Set();
-
   let sentenceCompleted = false;
 
+  let lastWordCount = 0;
 
-  /* -----------------------------------------
+
+  /* =========================================
      LANGUAGE
-     ----------------------------------------- */
+     ========================================= */
 
   function getLanguage() {
 
-    return localStorage.getItem("joryLanguage") || "en";
+    return (
+      localStorage.getItem("joryLanguage") ||
+      "en"
+    );
 
   }
 
 
-  /* -----------------------------------------
-     NORMALIZE TEXT
-     ----------------------------------------- */
+  /* =========================================
+     NORMALIZE
+     ========================================= */
 
   function normalizeText(text) {
 
-    return text
+    return String(text || "")
+      .replace(/\u00A0/g, " ")
       .replace(/\s+/g, " ")
       .trim();
 
   }
 
 
-  /* -----------------------------------------
+  /* =========================================
      SPEAK
-     ----------------------------------------- */
+     ========================================= */
 
   function speak(text) {
 
-    if (!text) return;
+    if (!text) {
+      return;
+    }
 
     if (!("speechSynthesis" in window)) {
       return;
@@ -136,81 +179,103 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.speechSynthesis.cancel();
 
-    const utterance =
+    const voice =
       new SpeechSynthesisUtterance(text);
 
-    utterance.lang = "en-US";
-    utterance.rate = 0.88;
-    utterance.pitch = 1;
+    voice.lang = "en-US";
 
-    window.speechSynthesis.speak(utterance);
+    voice.rate = 0.88;
+
+    voice.pitch = 1;
+
+    window.speechSynthesis.speak(voice);
+
   }
 
 
-  /* -----------------------------------------
-     SPEAK COMPLETED WORD
-     ----------------------------------------- */
+  /* =========================================
+     SPEAK WORD
+     ========================================= */
 
-  function speakCompletedWord() {
-
-    const value = sentenceInput.value;
-
-    const words = value.trim().split(/\s+/);
-
-    if (words.length === 0) {
-      return;
-    }
-
-    const wordIndex = words.length - 1;
-
-    const word = words[wordIndex];
+  function speakWord(word) {
 
     if (!word) {
       return;
     }
 
-    if (completedWords.has(wordIndex)) {
-      return;
-    }
-
-    completedWords.add(wordIndex);
-
-    speak(word);
+    speak(
+      word
+        .replace(/[.,!?;:]+$/g, "")
+        .trim()
+    );
 
   }
 
 
-  /* -----------------------------------------
-     UPDATE STORY HEADER
-     ----------------------------------------- */
+  /* =========================================
+     GET EDITOR TEXT
+     ========================================= */
+
+  function getEditorText() {
+
+    if (!sentenceEditor) {
+      return "";
+    }
+
+    return normalizeText(
+      sentenceEditor.innerText ||
+      sentenceEditor.textContent ||
+      ""
+    );
+
+  }
+
+
+  /* =========================================
+     UPDATE HEADER
+     ========================================= */
 
   function updateStoryHeader() {
 
+    const language =
+      getLanguage();
+
+
     if (storyEmoji) {
-      storyEmoji.textContent = story.emoji || "📖";
+
+      storyEmoji.textContent =
+        story.emoji || "📖";
+
     }
 
+
     if (storyLevel) {
-      storyLevel.textContent = story.level || "A1";
+
+      storyLevel.textContent =
+        story.level || "A1";
+
     }
+
 
     if (storyTitle) {
 
       storyTitle.textContent =
-        getLanguage() === "ar"
+        language === "ar"
           ? (story.titleAr || story.title)
           : story.title;
 
     }
 
+
     if (storyDescription) {
 
       storyDescription.textContent =
-        getLanguage() === "ar"
+        language === "ar"
           ? (story.descriptionAr || story.description)
           : story.description;
 
     }
+
 
     if (backToLevel) {
 
@@ -221,7 +286,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `level.html?level=${encodeURIComponent(level)}`;
 
       backToLevel.textContent =
-        getLanguage() === "ar"
+        language === "ar"
           ? `→ العودة إلى ${level}`
           : `← Back to ${level}`;
 
@@ -230,15 +295,102 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  /* -----------------------------------------
-     SHOW CURRENT SENTENCE
-     ----------------------------------------- */
+  /* =========================================
+     UPDATE PROGRESS
+     ========================================= */
 
-  function renderSentence() {
+  function updateProgress() {
 
-    if (!sentences.length) {
+    const total =
+      sentences.length;
+
+    const current =
+      currentSentenceIndex + 1;
+
+
+    if (sentenceProgressText) {
+
+      sentenceProgressText.textContent =
+        `${current} / ${total}`;
+
+    }
+
+
+    if (sentenceProgressFill) {
+
+      const percentage =
+        total > 0
+          ? (current / total) * 100
+          : 0;
+
+      sentenceProgressFill.style.width =
+        `${percentage}%`;
+
+    }
+
+  }
+
+
+  /* =========================================
+     RESET EDITOR
+     ========================================= */
+
+  function resetEditor() {
+
+    if (!sentenceEditor) {
       return;
     }
+
+    /*
+       IMPORTANT:
+
+       We only clear the editor
+       when changing sentences.
+
+       We NEVER rewrite it while
+       the user is typing.
+
+       This means Backspace/Delete works.
+    */
+
+    sentenceEditor.textContent = "";
+
+    sentenceEditor.contentEditable = "true";
+
+    sentenceEditor.setAttribute(
+      "contenteditable",
+      "true"
+    );
+
+    sentenceCompleted = false;
+
+    lastWordCount = 0;
+
+
+    if (typingFeedback) {
+
+      typingFeedback.textContent = "";
+
+      typingFeedback.className =
+        "typing-feedback";
+
+    }
+
+
+    if (nextSentenceButton) {
+
+      nextSentenceButton.disabled = true;
+
+    }
+
+  }
+
+
+  /* =========================================
+     RENDER SENTENCE
+     ========================================= */
+
+  function renderSentence() {
 
     const sentence =
       sentences[currentSentenceIndex];
@@ -247,18 +399,17 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    sentenceCompleted = false;
 
-    completedWords = new Set();
-
-
-    /* ---------- TEXT ---------- */
-
-    const englishText =
+    const english =
       sentence.text || "";
 
-    const arabicText =
+    const arabic =
       sentence.translation || "";
+
+
+    sentenceCompleted = false;
+
+    lastWordCount = 0;
 
 
     /* ---------- NUMBER ---------- */
@@ -285,7 +436,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (currentWordMeaning) {
 
       currentWordMeaning.textContent =
-        arabicText;
+        arabic;
 
     }
 
@@ -305,108 +456,55 @@ document.addEventListener("DOMContentLoaded", () => {
     if (ghostSentence) {
 
       ghostSentence.textContent =
-        englishText;
+        english;
 
     }
 
 
-    /* ---------- INPUT ---------- */
+    /* ---------- EDITOR ---------- */
 
-    if (sentenceInput) {
-
-      sentenceInput.value = "";
-
-      sentenceInput.disabled = false;
-
-      sentenceInput.focus();
-
-    }
-
-
-    /* ---------- FEEDBACK ---------- */
-
-    if (typingFeedback) {
-
-      typingFeedback.textContent = "";
-
-      typingFeedback.className =
-        "typing-feedback";
-
-    }
-
-
-    /* ---------- NEXT ---------- */
-
-    if (nextSentenceButton) {
-
-      nextSentenceButton.disabled = true;
-
-    }
+    resetEditor();
 
 
     /* ---------- PROGRESS ---------- */
 
     updateProgress();
 
-  }
 
+    /*
+       Focus the real editable area.
+    */
 
-  /* -----------------------------------------
-     PROGRESS
-     ----------------------------------------- */
+    setTimeout(() => {
 
-  function updateProgress() {
+      if (sentenceEditor) {
+        sentenceEditor.focus();
+      }
 
-    const total =
-      sentences.length;
-
-    const current =
-      currentSentenceIndex + 1;
-
-    if (sentenceProgressText) {
-
-      sentenceProgressText.textContent =
-        `${current} / ${total}`;
-
-    }
-
-    if (sentenceProgressFill) {
-
-      const percentage =
-        total > 0
-          ? (current / total) * 100
-          : 0;
-
-      sentenceProgressFill.style.width =
-        `${percentage}%`;
-
-    }
+    }, 100);
 
   }
 
 
-  /* -----------------------------------------
+  /* =========================================
      CHECK SENTENCE
-     ----------------------------------------- */
+     ========================================= */
 
   function checkSentence() {
-
-    if (!sentenceInput) {
-      return;
-    }
 
     const sentence =
       sentences[currentSentenceIndex];
 
-    if (!sentence) {
+    if (!sentence || !sentenceEditor) {
       return;
     }
 
+
     const expected =
-      normalizeText(sentence.text || "");
+      normalizeText(sentence.text);
 
     const typed =
-      normalizeText(sentenceInput.value || "");
+      getEditorText();
 
 
     /* ---------- EMPTY ---------- */
@@ -425,14 +523,16 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       if (nextSentenceButton) {
+
         nextSentenceButton.disabled = true;
+
       }
 
       return;
     }
 
 
-    /* ---------- EXACT CORRECT ---------- */
+    /* ---------- CORRECT ---------- */
 
     if (typed === expected) {
 
@@ -452,19 +552,19 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
 
-      /* Speak complete sentence */
-
-      speak(expected);
-
-
-      /* Enable Next */
-
       if (nextSentenceButton) {
+
         nextSentenceButton.disabled = false;
+
       }
 
 
-      /* Save progress */
+      /*
+         Read the complete sentence.
+      */
+
+      speak(expected);
+
 
       saveProgress();
 
@@ -472,84 +572,137 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    /* ---------- PARTIAL / INCORRECT ---------- */
+    /* ---------- NOT COMPLETE ---------- */
 
     sentenceCompleted = false;
 
+
     if (nextSentenceButton) {
+
       nextSentenceButton.disabled = true;
+
     }
 
 
-    /*
-       Only show a helpful message when
-       the user has typed enough to compare.
-    */
-
     if (typingFeedback) {
 
-      if (typed.length >= expected.length) {
+      typingFeedback.textContent = "";
 
-        typingFeedback.textContent =
-          getLanguage() === "ar"
-            ? "تحققي من الجملة وحاولي مرة أخرى."
-            : "Check the sentence and try again.";
-
-        typingFeedback.className =
-          "typing-feedback incorrect";
-
-      } else {
-
-        typingFeedback.textContent = "";
-
-        typingFeedback.className =
-          "typing-feedback";
-
-      }
+      typingFeedback.className =
+        "typing-feedback";
 
     }
 
   }
 
 
-  /* -----------------------------------------
-     INPUT EVENT
-     ----------------------------------------- */
+  /* =========================================
+     WORD PRONUNCIATION
+     ========================================= */
 
-  if (sentenceInput) {
+  function handleWordPronunciation() {
 
-    sentenceInput.addEventListener(
+    if (!sentenceEditor) {
+      return;
+    }
+
+    const text =
+      getEditorText();
+
+    if (!text) {
+
+      lastWordCount = 0;
+
+      return;
+    }
+
+
+    const words =
+      text.split(/\s+/)
+        .filter(Boolean);
+
+
+    const currentWordCount =
+      words.length;
+
+
+    /*
+       If the number of words increased,
+       the previous word has been completed.
+    */
+
+    if (currentWordCount > lastWordCount) {
+
+      /*
+         Do not pronounce the final word
+         immediately unless the user typed
+         a space after it.
+
+         That way:
+
+         My
+         My name
+         My name is
+
+         only pronounce a word after
+         the learner finishes it.
+      */
+
+      const endsWithSpace =
+        /\s$/.test(
+          sentenceEditor.innerText || ""
+        );
+
+
+      if (
+        endsWithSpace &&
+        currentWordCount >= 1
+      ) {
+
+        const completedWord =
+          words[currentWordCount - 1];
+
+        speakWord(completedWord);
+
+      }
+
+    }
+
+
+    lastWordCount =
+      currentWordCount;
+
+  }
+
+
+  /* =========================================
+     EDITOR INPUT
+     ========================================= */
+
+  if (sentenceEditor) {
+
+    sentenceEditor.addEventListener(
       "input",
       () => {
 
         /*
-           IMPORTANT:
-           We never rewrite sentenceInput.value here.
-           This keeps typing and deletion working.
+           THIS IS THE IMPORTANT PART.
+
+           We do NOT replace innerHTML.
+           We do NOT replace textContent.
+
+           Therefore the user can:
+
+           type
+           delete
+           backspace
+           correct mistakes
+           select text
+           paste
         */
 
-        const value =
-          sentenceInput.value;
 
-        const lastCharacter =
-          value.slice(-1);
-
-        /*
-           When the user presses space,
-           the previous word is considered complete.
-        */
-
-        if (lastCharacter === " ") {
-
-          speakCompletedWord();
-
-        }
-
-        /*
-           If the final word is completed
-           without a trailing space, speak it
-           when the whole sentence is correct.
-        */
+        handleWordPronunciation();
 
         checkSentence();
 
@@ -557,31 +710,17 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-    /* -----------------------------------------
+    /* =====================================
        KEYBOARD
-       ----------------------------------------- */
+       ===================================== */
 
-    sentenceInput.addEventListener(
+    sentenceEditor.addEventListener(
       "keydown",
       (event) => {
 
         /*
-           Space = completed word
-        */
-
-        if (event.key === " ") {
-
-          setTimeout(() => {
-
-            speakCompletedWord();
-
-          }, 0);
-
-        }
-
-
-        /*
-           Enter = check sentence
+           Enter should not create a
+           new paragraph.
         */
 
         if (event.key === "Enter") {
@@ -595,12 +734,30 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     );
 
+
+    /* =====================================
+       CLICK AREA
+       ===================================== */
+
+    if (sentenceWritingArea) {
+
+      sentenceWritingArea.addEventListener(
+        "click",
+        () => {
+
+          sentenceEditor.focus();
+
+        }
+      );
+
+    }
+
   }
 
 
-  /* -----------------------------------------
+  /* =========================================
      AUDIO BUTTON
-     ----------------------------------------- */
+     ========================================= */
 
   if (sentenceAudioButton) {
 
@@ -611,7 +768,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const sentence =
           sentences[currentSentenceIndex];
 
-        if (!sentence) return;
+        if (!sentence) {
+          return;
+        }
 
         speak(sentence.text);
 
@@ -621,9 +780,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  /* -----------------------------------------
-     NEXT BUTTON
-     ----------------------------------------- */
+  /* =========================================
+     NEXT SENTENCE
+     ========================================= */
 
   if (nextSentenceButton) {
 
@@ -634,6 +793,11 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!sentenceCompleted) {
           return;
         }
+
+
+        /*
+           There are more sentences.
+        */
 
         if (
           currentSentenceIndex <
@@ -648,7 +812,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        /* ---------- STORY FINISHED ---------- */
+        /*
+           STORY COMPLETE
+        */
 
         if (typingFeedback) {
 
@@ -662,20 +828,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
         }
 
-        if (nextSentenceButton) {
 
-          nextSentenceButton.disabled = true;
+        nextSentenceButton.disabled =
+          true;
 
-          nextSentenceButton.textContent =
-            getLanguage() === "ar"
-              ? "✓ اكتملت القصة"
-              : "✓ Story Complete";
+        nextSentenceButton.textContent =
+          getLanguage() === "ar"
+            ? "✓ اكتملت القصة"
+            : "✓ Story Complete";
+
+
+        if (sentenceEditor) {
+
+          sentenceEditor.contentEditable =
+            "false";
 
         }
 
-        if (sentenceInput) {
-          sentenceInput.disabled = true;
-        }
 
         saveProgress();
 
@@ -685,9 +854,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  /* -----------------------------------------
+  /* =========================================
      SAVE PROGRESS
-     ----------------------------------------- */
+     ========================================= */
 
   function saveProgress() {
 
@@ -701,8 +870,14 @@ document.addEventListener("DOMContentLoaded", () => {
           localStorage.getItem(key) || "{}"
         );
 
+
       const storyKey =
-        String(story.id || story.title);
+        String(
+          story.id ||
+          story.title ||
+          "story"
+        );
+
 
       if (!oldData[storyKey]) {
 
@@ -711,6 +886,7 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
       }
+
 
       if (
         sentenceCompleted &&
@@ -721,9 +897,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         oldData[storyKey]
           .completedSentences
-          .push(currentSentenceIndex);
+          .push(
+            currentSentenceIndex
+          );
 
       }
+
 
       localStorage.setItem(
         key,
@@ -742,9 +921,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  /* -----------------------------------------
+  /* =========================================
      LANGUAGE CHANGE
-     ----------------------------------------- */
+     ========================================= */
 
   document.addEventListener(
     "joryLanguageChanged",
@@ -758,9 +937,9 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
 
-  /* -----------------------------------------
-     INITIALIZE
-     ----------------------------------------- */
+  /* =========================================
+     START
+     ========================================= */
 
   updateStoryHeader();
 
