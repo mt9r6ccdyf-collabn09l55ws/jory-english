@@ -22,7 +22,6 @@
   >
 </head>
 
-
 <body>
 
   <!-- HEADER -->
@@ -62,7 +61,7 @@
   </header>
 
 
-  <!-- STORY -->
+  <!-- STORY PAGE -->
   <main class="story-page">
 
     <div class="container story-container">
@@ -76,7 +75,7 @@
       </a>
 
 
-      <!-- STORY HEADER -->
+      <!-- STORY INFORMATION -->
       <section class="story-top">
 
         <div
@@ -131,7 +130,7 @@
       </section>
 
 
-      <!-- LEARNING CARD -->
+      <!-- SENTENCE LEARNING -->
       <section class="sentence-learning-card">
 
         <div
@@ -159,31 +158,44 @@
 
 
         <!-- =================================
-             SENTENCE WRITING
+             REAL WRITING AREA
+             NO INPUT BOX
              ================================= -->
 
-        <div class="sentence-writing-area">
+        <div
+          id="sentenceWritingArea"
+          class="sentence-writing-area"
+          role="textbox"
+          aria-multiline="false"
+          aria-label="Type the sentence"
+          tabindex="0"
+        >
 
-          <!-- Transparent guide -->
+          <!--
+            This is the actual editable area.
+
+            There is NO visible input box.
+            The sentence itself is where you type.
+          -->
+
+          <div
+            id="sentenceEditor"
+            class="sentence-editor"
+            contenteditable="true"
+            spellcheck="false"
+            autocorrect="off"
+            autocapitalize="off"
+            translate="no"
+          ></div>
+
+          <!-- Ghost sentence -->
           <div
             id="ghostSentence"
             class="ghost-sentence"
+            aria-hidden="true"
           >
             My name is Lamar.
           </div>
-
-
-          <!-- User typing -->
-          <input
-            id="sentenceInput"
-            class="sentence-input"
-            type="text"
-            autocomplete="off"
-            autocorrect="off"
-            autocapitalize="off"
-            spellcheck="false"
-            aria-label="Type the sentence"
-          >
 
         </div>
 
@@ -237,7 +249,6 @@
   </footer>
 
 
-  <!-- JAVASCRIPT -->
   <script src="../js/data.js"></script>
   <script src="../js/app.js"></script>
   <script src="../js/story.js"></script>
