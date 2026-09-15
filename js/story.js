@@ -17,17 +17,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let story = null;
 
-
   if (typeof STORIES !== "undefined") {
 
     if (storyId && typeof getStoryById === "function") {
       story = getStoryById(storyId);
     }
-
-    /*
-       If no story ID exists, use
-       the first A1 story.
-    */
 
     if (!story && typeof getStoriesByLevel === "function") {
 
@@ -101,8 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!story) {
 
     if (storyTitle) {
-      storyTitle.textContent =
-        "Story not found";
+      storyTitle.textContent = "Story not found";
     }
 
     if (storyDescription) {
@@ -132,7 +125,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let sentenceCompleted = false;
 
-  let lastWordCount = 0;
+  let lastCompletedSegment = "";
+
+  let previousText = "";
 
 
   /* =========================================
@@ -158,6 +153,20 @@ document.addEventListener("DOMContentLoaded", () => {
     return String(text || "")
       .replace(/\u00A0/g, " ")
       .replace(/\s+/g, " ")
+      .trim();
+
+  }
+
+
+  /* =========================================
+     REMOVE PUNCTUATION
+     ========================================= */
+
+  function cleanWord(text) {
+
+    return String(text || "")
+      .replace(/^[.,!?;:'"“”‘’()[\]{}]+/g, "")
+      .replace(/[.,!?;:'"“”‘’()[\]{}]+$/g, "")
       .trim();
 
   }
@@ -194,45 +203,335 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     SPEAK WORD
+     FIND WORD / PHRASE TRANSLATION
      ========================================= */
 
-  function speakWord(word) {
+  function getWordTranslation(typedText) {
 
-    if (!word) {
-      return;
+    const cleanTyped =
+      normalizeText(typedText).toLowerCase();
+
+    if (!cleanTyped) {
+      return "";
     }
 
-    speak(
-      word
-        .replace(/[.,!?;:]+$/g, "")
-        .trim()
-    );
+
+    const sentence =
+      sentences[currentSentenceIndex];
+
+    if (!sentence) {
+      return "";
+    }
+
+
+    /* -----------------------------------------
+       FIRST: USE WORD DATA FROM STORY
+       ----------------------------------------- */
+
+    if (Array.isArray(sentence.words)) {
+
+      for (const item of sentence.words) {
+
+        let word = "";
+        let translation = "";
+
+
+        if (typeof item === "string") {
+
+          word = item;
+
+        } else if (item && typeof item === "object") {
+
+          word =
+            item.word ||
+            item.text ||
+            item.term ||
+            item.english ||
+            "";
+
+          translation =
+            item.translation ||
+            item.meaning ||
+            item.meaningAr ||
+            item.arabic ||
+            item.ar ||
+            item.translationAr ||
+            "";
+        }
+
+
+        if (!word) {
+          continue;
+        }
+
+
+        const cleanWordData =
+          normalizeText(word).toLowerCase();
+
+
+        if (
+          cleanWordData === cleanTyped &&
+          translation
+        ) {
+
+          return translation;
+
+        }
+
+      }
+
+    }
+
+
+    /* -----------------------------------------
+       COMMON PHRASES
+       -----------------------------------------
+
+       These are only fallback translations
+       for phrases such as "wake up".
+       ----------------------------------------- */
+
+    const fallbackTranslations = {
+
+      "wake up": "يستيقظ",
+      "get up": "ينهض",
+      "go to": "يذهب إلى",
+      "go home": "يذهب إلى المنزل",
+      "go back": "يعود",
+      "come back": "يعود",
+      "sit down": "يجلس",
+      "stand up": "يقف",
+      "get ready": "يستعد",
+      "brush my teeth": "أنظف أسناني",
+      "wash my face": "أغسل وجهي",
+      "have breakfast": "أتناول الإفطار",
+      "eat breakfast": "أتناول الإفطار",
+      "go to school": "يذهب إلى المدرسة",
+      "go to bed": "يذهب إلى النوم",
+      "look at": "ينظر إلى",
+      "listen to": "يستمع إلى",
+      "talk to": "يتحدث إلى"
+    };
+
+
+    if (fallbackTranslations[cleanTyped]) {
+
+      return fallbackTranslations[cleanTyped];
+
+    }
+
+
+    return "";
 
   }
 
 
   /* =========================================
-     GET EDITOR TEXT
+     SHOW CURRENT WORD TRANSLATION
      ========================================= */
 
-  function getEditorText() {
+  function showCurrentWordTranslation(text) {
+
+    if (!currentWordIPA) {
+      return;
+    }
+
+    const translation =
+      getWordTranslation(text);
+
+
+    if (translation) {
+
+      currentWordIPA.textContent =
+        translation;
+
+    } else {
+
+      currentWordIPA.textContent =
+        "";
+
+    }
+
+  }
+
+
+  /* =========================================
+     GET CURRENT TYPED PART
+     ========================================= */
+
+  function getCurrentPart() {
 
     if (!sentenceEditor) {
       return "";
     }
 
-    return normalizeText(
-      sentenceEditor.innerText ||
-      sentenceEditor.textContent ||
-      ""
-    );
+    const rawText =
+      sentenceEditor.innerText || "";
+
+    /*
+       Everything after the last space
+       is normally the current word.
+
+       BUT if the story contains a phrase
+       such as "wake up", we keep the
+       phrase together.
+    */
+
+    const withoutTrailingSpace =
+      rawText.replace(/\s+$/, "");
+
+    if (!withoutTrailingSpace) {
+      return "";
+    }
+
+
+    const parts =
+      withoutTrailingSpace.split(/\s+/);
+
+
+    /*
+       Try the longest possible phrase
+       from the current end.
+
+       Example:
+
+       wake
+       wake up
+
+       When "wake up" exists in the
+       vocabulary, we use the whole phrase.
+    */
+
+    const maxWords =
+      Math.min(parts.length, 4);
+
+
+    for (
+      let count = maxWords;
+      count >= 1;
+      count--
+    ) {
+
+      const candidate =
+        parts
+          .slice(-count)
+          .join(" ");
+
+
+      if (getWordTranslation(candidate)) {
+
+        return candidate;
+
+      }
+
+    }
+
+
+    return parts[parts.length - 1];
 
   }
 
 
   /* =========================================
-     UPDATE HEADER
+     SPEAK COMPLETED WORD / PHRASE
+     ========================================= */
+
+  function handleCompletedPart() {
+
+    if (!sentenceEditor) {
+      return;
+    }
+
+
+    const rawText =
+      sentenceEditor.innerText || "";
+
+
+    /*
+       Only do this when the learner
+       actually pressed space.
+    */
+
+    if (!/\s$/.test(rawText)) {
+      return;
+    }
+
+
+    const beforeSpace =
+      rawText
+        .replace(/\s+$/, "")
+        .trim();
+
+
+    if (!beforeSpace) {
+      return;
+    }
+
+
+    const currentPart =
+      getCurrentPart();
+
+
+    if (!currentPart) {
+      return;
+    }
+
+
+    /*
+       Prevent repeating the same phrase.
+    */
+
+    if (
+      currentPart.toLowerCase() ===
+      lastCompletedSegment.toLowerCase()
+    ) {
+
+      return;
+
+    }
+
+
+    const translation =
+      getWordTranslation(currentPart);
+
+
+    /*
+       If we know this word/phrase,
+       pronounce it.
+    */
+
+    if (translation) {
+
+      speak(
+        cleanWord(currentPart)
+      );
+
+    }
+
+
+    /*
+       Clear temporary translation
+       after the word is completed.
+
+       The full sentence translation
+       ABOVE IS NOT TOUCHED.
+    */
+
+    if (currentWordIPA) {
+
+      currentWordIPA.textContent = "";
+
+    }
+
+
+    lastCompletedSegment =
+      currentPart;
+
+  }
+
+
+  /* =========================================
+     STORY HEADER
      ========================================= */
 
   function updateStoryHeader() {
@@ -296,7 +595,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     UPDATE PROGRESS
+     PROGRESS
      ========================================= */
 
   function updateProgress() {
@@ -332,26 +631,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     RESET EDITOR
+     RESET SENTENCE
      ========================================= */
 
-  function resetEditor() {
+  function resetSentence() {
 
     if (!sentenceEditor) {
       return;
     }
 
-    /*
-       IMPORTANT:
-
-       We only clear the editor
-       when changing sentences.
-
-       We NEVER rewrite it while
-       the user is typing.
-
-       This means Backspace/Delete works.
-    */
 
     sentenceEditor.textContent = "";
 
@@ -362,9 +650,30 @@ document.addEventListener("DOMContentLoaded", () => {
       "true"
     );
 
+
     sentenceCompleted = false;
 
-    lastWordCount = 0;
+    lastCompletedSegment = "";
+
+    previousText = "";
+
+
+    /*
+       IMPORTANT:
+
+       This element is used for the
+       temporary word translation.
+
+       The full Arabic sentence is
+       stored in currentWordMeaning
+       and remains untouched.
+    */
+
+    if (currentWordIPA) {
+
+      currentWordIPA.textContent = "";
+
+    }
 
 
     if (typingFeedback) {
@@ -400,16 +709,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    const english =
-      sentence.text || "";
-
-    const arabic =
-      sentence.translation || "";
-
-
     sentenceCompleted = false;
 
-    lastWordCount = 0;
+    lastCompletedSegment = "";
+
+    previousText = "";
 
 
     /* ---------- NUMBER ---------- */
@@ -431,22 +735,28 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    /* ---------- ARABIC ---------- */
+    /* ---------- FULL ARABIC TRANSLATION ---------- */
 
     if (currentWordMeaning) {
 
+      /*
+         THIS IS THE IMPORTANT PART.
+
+         Full sentence translation stays
+         here permanently.
+      */
+
       currentWordMeaning.textContent =
-        arabic;
+        sentence.translation || "";
 
     }
 
 
-    /* ---------- IPA ---------- */
+    /* ---------- IPA / TEMPORARY WORD MEANING ---------- */
 
     if (currentWordIPA) {
 
-      currentWordIPA.textContent =
-        sentence.ipa || "";
+      currentWordIPA.textContent = "";
 
     }
 
@@ -456,24 +766,20 @@ document.addEventListener("DOMContentLoaded", () => {
     if (ghostSentence) {
 
       ghostSentence.textContent =
-        english;
+        sentence.text || "";
 
     }
 
 
-    /* ---------- EDITOR ---------- */
+    /* ---------- RESET EDITOR ---------- */
 
-    resetEditor();
+    resetSentence();
 
 
     /* ---------- PROGRESS ---------- */
 
     updateProgress();
 
-
-    /*
-       Focus the real editable area.
-    */
 
     setTimeout(() => {
 
@@ -504,14 +810,18 @@ document.addEventListener("DOMContentLoaded", () => {
       normalizeText(sentence.text);
 
     const typed =
-      getEditorText();
+      normalizeText(
+        sentenceEditor.innerText || ""
+      );
 
-
-    /* ---------- EMPTY ---------- */
 
     if (!typed) {
 
       sentenceCompleted = false;
+
+      if (nextSentenceButton) {
+        nextSentenceButton.disabled = true;
+      }
 
       if (typingFeedback) {
 
@@ -522,17 +832,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
       }
 
-      if (nextSentenceButton) {
-
-        nextSentenceButton.disabled = true;
-
-      }
-
       return;
     }
 
 
-    /* ---------- CORRECT ---------- */
+    /* ---------- COMPLETE ---------- */
 
     if (typed === expected) {
 
@@ -560,7 +864,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
       /*
-         Read the complete sentence.
+         Read the entire sentence.
       */
 
       speak(expected);
@@ -597,86 +901,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     WORD PRONUNCIATION
-     ========================================= */
-
-  function handleWordPronunciation() {
-
-    if (!sentenceEditor) {
-      return;
-    }
-
-    const text =
-      getEditorText();
-
-    if (!text) {
-
-      lastWordCount = 0;
-
-      return;
-    }
-
-
-    const words =
-      text.split(/\s+/)
-        .filter(Boolean);
-
-
-    const currentWordCount =
-      words.length;
-
-
-    /*
-       If the number of words increased,
-       the previous word has been completed.
-    */
-
-    if (currentWordCount > lastWordCount) {
-
-      /*
-         Do not pronounce the final word
-         immediately unless the user typed
-         a space after it.
-
-         That way:
-
-         My
-         My name
-         My name is
-
-         only pronounce a word after
-         the learner finishes it.
-      */
-
-      const endsWithSpace =
-        /\s$/.test(
-          sentenceEditor.innerText || ""
-        );
-
-
-      if (
-        endsWithSpace &&
-        currentWordCount >= 1
-      ) {
-
-        const completedWord =
-          words[currentWordCount - 1];
-
-        speakWord(completedWord);
-
-      }
-
-    }
-
-
-    lastWordCount =
-      currentWordCount;
-
-  }
-
-
-  /* =========================================
-     EDITOR INPUT
+     INPUT EVENT
      ========================================= */
 
   if (sentenceEditor) {
@@ -685,26 +910,64 @@ document.addEventListener("DOMContentLoaded", () => {
       "input",
       () => {
 
+        const currentText =
+          sentenceEditor.innerText || "";
+
+
         /*
-           THIS IS THE IMPORTANT PART.
+           Detect a SPACE.
 
-           We do NOT replace innerHTML.
-           We do NOT replace textContent.
+           We check the REAL editor text
+           BEFORE normalizeText().
 
-           Therefore the user can:
-
-           type
-           delete
-           backspace
-           correct mistakes
-           select text
-           paste
+           This is what fixes the word
+           pronunciation.
         */
 
+        const addedSpace =
+          /\s$/.test(currentText);
 
-        handleWordPronunciation();
+
+        /*
+           While typing the current word/
+           phrase, show its translation.
+        */
+
+        if (!addedSpace) {
+
+          const currentPart =
+            getCurrentPart();
+
+          showCurrentWordTranslation(
+            currentPart
+          );
+
+        }
+
+
+        /*
+           When SPACE is pressed:
+
+           1. pronounce current word/phrase
+           2. clear its temporary translation
+        */
+
+        if (addedSpace) {
+
+          handleCompletedPart();
+
+        }
+
+
+        /*
+           Check complete sentence.
+        */
 
         checkSentence();
+
+
+        previousText =
+          currentText;
 
       }
     );
@@ -718,11 +981,6 @@ document.addEventListener("DOMContentLoaded", () => {
       "keydown",
       (event) => {
 
-        /*
-           Enter should not create a
-           new paragraph.
-        */
-
         if (event.key === "Enter") {
 
           event.preventDefault();
@@ -734,23 +992,25 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     );
 
+  }
 
-    /* =====================================
-       CLICK AREA
-       ===================================== */
 
-    if (sentenceWritingArea) {
+  /* =========================================
+     CLICK AREA
+     ========================================= */
 
-      sentenceWritingArea.addEventListener(
-        "click",
-        () => {
+  if (sentenceWritingArea) {
 
+    sentenceWritingArea.addEventListener(
+      "click",
+      () => {
+
+        if (sentenceEditor) {
           sentenceEditor.focus();
-
         }
-      );
 
-    }
+      }
+    );
 
   }
 
@@ -781,7 +1041,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   /* =========================================
-     NEXT SENTENCE
+     NEXT BUTTON
      ========================================= */
 
   if (nextSentenceButton) {
@@ -795,10 +1055,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        /*
-           There are more sentences.
-        */
-
         if (
           currentSentenceIndex <
           sentences.length - 1
@@ -809,12 +1065,11 @@ document.addEventListener("DOMContentLoaded", () => {
           renderSentence();
 
           return;
+
         }
 
 
-        /*
-           STORY COMPLETE
-        */
+        /* ---------- STORY COMPLETE ---------- */
 
         if (typingFeedback) {
 
